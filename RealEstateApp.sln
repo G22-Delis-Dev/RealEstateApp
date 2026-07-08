@@ -1,30 +1,34 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37411.7 d17.14
+VisualStudioVersion = 17.14.37411.7
 MinimumVisualStudioVersion = 10.0.40219.1
+
+# Carpetas de la Solución (Solution Folders)
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{E6BA0287-C429-4185-A3F9-05FF2137EE01}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{E9D282ED-3575-453E-90E5-C5668A00896C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentacion", "Presentacion", "{00EBF305-A7EE-4F38-9FAF-CF360E2CE8FD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{00EBF305-A7EE-4F38-9FAF-CF360E2CE8FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Domain", "RealEstateApp.Domain\RealEstateApp.Domain.csproj", "{113661FB-9AA9-4DB4-8059-8D436C185DCD}"
+
+# Proyectos C# (.csproj) mapeados dentro de sus respectivas rutas físicas en src
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Domain", "src\Core\RealEstateApp.Domain\RealEstateApp.Domain.csproj", "{113661FB-9AA9-4DB4-8059-8D436C185DCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Application", "RealEstateApp.Application\RealEstateApp.Application.csproj", "{F30AC997-53C0-4FF3-B2EF-DD2C08040C87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Application", "src\Core\RealEstateApp.Application\RealEstateApp.Application.csproj", "{F30AC997-53C0-4FF3-B2EF-DD2C08040C87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Infrastructure.Persistence", "RealEstateApp.Infrastructure.Persistence\RealEstateApp.Infrastructure.Persistence.csproj", "{2AE66A66-313C-470D-9D89-263A38EE07CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Infrastructure.Persistence", "src\Infrastructure\RealEstateApp.Infrastructure.Persistence\RealEstateApp.Infrastructure.Persistence.csproj", "{2AE66A66-313C-470D-9D89-263A38EE07CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Infrastructure.Identity", "RealEstateApp.Infrastructure.Identity\RealEstateApp.Infrastructure.Identity.csproj", "{4BF3EECC-A407-4037-8216-7BE819A1BABF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Infrastructure.Identity", "src\Infrastructure\RealEstateApp.Infrastructure.Identity\RealEstateApp.Infrastructure.Identity.csproj", "{4BF3EECC-A407-4037-8216-7BE819A1BABF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Infrastructure.Shared", "RealEstateApp.Infrastructure.Shared\RealEstateApp.Infrastructure.Shared.csproj", "{C56E6773-36A3-4F41-AE6B-DD133CD0D6D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.Infrastructure.Shared", "src\Infrastructure\RealEstateApp.Infrastructure.Shared\RealEstateApp.Infrastructure.Shared.csproj", "{C56E6773-36A3-4F41-AE6B-DD133CD0D6D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.API", "RealEstateApp.API\RealEstateApp.API.csproj", "{FF72FAC8-9A8E-4A4C-94B7-FA8783AEB9FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.API", "src\Presentation\RealEstateApp.API\RealEstateApp.API.csproj", "{FF72FAC8-9A8E-4A4C-94B7-FA8783AEB9FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.WebApp", "RealEstateApp.WebApp\RealEstateApp.WebApp.csproj", "{7D391CC5-776B-45D1-978E-66E28D5AA812}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateApp.WebApp", "src\Presentation\RealEstateApp.WebApp\RealEstateApp.WebApp.csproj", "{7D391CC5-776B-45D1-978E-66E28D5AA812}"
 EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,14 +68,21 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		# Anidamiento de las subcarpetas dentro de 'src'
 		{E6BA0287-C429-4185-A3F9-05FF2137EE01} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{E9D282ED-3575-453E-90E5-C5668A00896C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{00EBF305-A7EE-4F38-9FAF-CF360E2CE8FD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+
+		# Anidamiento de proyectos dentro de la carpeta virtual 'Core'
 		{113661FB-9AA9-4DB4-8059-8D436C185DCD} = {E6BA0287-C429-4185-A3F9-05FF2137EE01}
 		{F30AC997-53C0-4FF3-B2EF-DD2C08040C87} = {E6BA0287-C429-4185-A3F9-05FF2137EE01}
+
+		# Anidamiento de proyectos dentro de la carpeta virtual 'Infrastructure'
 		{2AE66A66-313C-470D-9D89-263A38EE07CD} = {E9D282ED-3575-453E-90E5-C5668A00896C}
 		{4BF3EECC-A407-4037-8216-7BE819A1BABF} = {E9D282ED-3575-453E-90E5-C5668A00896C}
 		{C56E6773-36A3-4F41-AE6B-DD133CD0D6D9} = {E9D282ED-3575-453E-90E5-C5668A00896C}
+
+		# Anidamiento de proyectos dentro de la carpeta virtual 'Presentation'
 		{FF72FAC8-9A8E-4A4C-94B7-FA8783AEB9FE} = {00EBF305-A7EE-4F38-9FAF-CF360E2CE8FD}
 		{7D391CC5-776B-45D1-978E-66E28D5AA812} = {00EBF305-A7EE-4F38-9FAF-CF360E2CE8FD}
 	EndGlobalSection
