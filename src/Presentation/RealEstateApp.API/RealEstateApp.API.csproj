@@ -7,7 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.17">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\RealEstateApp.Infrastructure.Persistence\RealEstateApp.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\RealEstateApp.Infrastructure.Identity\RealEstateApp.Infrastructure.Identity.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\RealEstateApp.Infrastructure.Shared\RealEstateApp.Infrastructure.Shared.csproj" />
+    <ProjectReference Include="..\..\Core\RealEstateApp.Application\RealEstateApp.Application.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,13 @@
+using RealEstateApp.Infrastructure.Persistence;
+using RealEstateApp.Infrastructure.Identity;
+using RealEstateApp.Infrastructure.Shared;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddPersistenceInfrastructure(builder.Configuration);
+builder.Services.AddIdentityInfrastructure(builder.Configuration);
+builder.Services.AddSharedInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
