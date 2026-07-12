@@ -1,19 +1,14 @@
-using System;
+﻿using RealEstateApp.Domain.Rules;
 
 namespace RealEstateApp.Domain.Exceptions;
 
-// Excepción para cuando una regla de negocio del dominio no se cumple
-public class BusinessRuleValidationException : DomainException
+public sealed class BusinessRuleValidationException : DomainException
 {
-    public string Details { get; }
+    public IBusinessRule BrokenRule { get; }
 
-    public BusinessRuleValidationException(string message) : base(message)
+    public BusinessRuleValidationException(IBusinessRule brokenRule)
+        : base(brokenRule.Message)
     {
-        Details = string.Empty;
-    }
-
-    public BusinessRuleValidationException(string message, string details) : base(message)
-    {
-        Details = details;
+        BrokenRule = brokenRule;
     }
 }
