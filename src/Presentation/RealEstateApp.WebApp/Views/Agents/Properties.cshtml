@@ -1,0 +1,30 @@
+﻿@model IEnumerable<RealEstateApp.Application.ViewModels.Properties.PropertyViewModel>
+@{
+    ViewData["Title"] = "Propiedades del agente";
+    var agent = ViewBag.Agent as RealEstateApp.Application.ViewModels.Agents.AgentViewModel;
+}
+
+<div class="container mt-4">
+    <a asp-action="Index" class="btn btn-link">&larr; Volver a agentes</a>
+    <h4>Propiedades de @agent?.FirstName @agent?.LastName</h4>
+
+    @if (TempData["InfoMessage"] != null)
+    {
+        <div class="alert alert-info">@TempData["InfoMessage"]</div>
+    }
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var p in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5>@p.PropertyTypeName · @p.SaleTypeName</h5>
+                        <p>RD$ @p.Price.ToString("N2")<br />@p.Rooms hab. · @p.Bathrooms baños</p>
+                        <a asp-controller="Home" asp-action="Details" asp-route-id="@p.Id" class="btn btn-outline-primary btn-sm">Ver detalle</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

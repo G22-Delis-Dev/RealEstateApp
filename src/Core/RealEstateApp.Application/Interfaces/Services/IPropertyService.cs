@@ -1,4 +1,5 @@
-﻿using RealEstateApp.Application.ViewModels.Properties;
+﻿using RealEstateApp.Application.DTOs.Properties;
+using RealEstateApp.Application.ViewModels.Properties;
 
 namespace RealEstateApp.Application.Interfaces.Services;
 
@@ -12,4 +13,8 @@ public interface IPropertyService : IGenericService<PropertyViewModel>
     Task<PropertyViewModel> CreateAsync(CreatePropertyViewModel model, string agentId);
     Task UpdateAsync(int id, EditPropertyViewModel model, string agentId);
     Task DeleteAsync(int id, string agentId);
+
+    Task<IEnumerable<PropertyDto>> GetAllForApiAsync();
+    Task<PropertyDto?> GetByIdForApiAsync(int id);
+    Task<PropertyDto?> GetByCodeForApiAsync(string code);
 }

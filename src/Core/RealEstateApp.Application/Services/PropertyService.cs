@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using RealEstateApp.Application.Common.Exceptions;
+using RealEstateApp.Application.DTOs.Properties;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.Interfaces.Shared;
 using RealEstateApp.Application.ViewModels.Properties;
@@ -120,6 +121,24 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
 
         _propertyRepository.Update(property);
         await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<PropertyDto>> GetAllForApiAsync()
+    {
+        var properties = await _propertyRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<PropertyDto>>(properties);
+    }
+
+    public async Task<PropertyDto?> GetByIdForApiAsync(int id)
+    {
+        var property = await _propertyRepository.GetByIdAsync(id);
+        return property is null ? null : _mapper.Map<PropertyDto>(property);
+    }
+
+    public async Task<PropertyDto?> GetByCodeForApiAsync(string code)
+    {
+        var property = await _propertyRepository.GetByCodeAsync(code);
+        return property is null ? null : _mapper.Map<PropertyDto>(property);
     }
 
     public async Task DeleteAsync(int id, string agentId)
