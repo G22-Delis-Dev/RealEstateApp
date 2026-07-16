@@ -4,8 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RealEstateApp.Infrastructure.Identity.Contexts;
 using RealEstateApp.Infrastructure.Identity.Entities;
-// using RealEstateApp.Application.Interfaces.Identity; // Descomentar cuando existan las implementaciones
-// using RealEstateApp.Infrastructure.Identity.Services;
+using RealEstateApp.Application.Interfaces.Identity;
+using RealEstateApp.Infrastructure.Identity.Services;
+using RealEstateApp.Infrastructure.Identity.Settings;
 
 namespace RealEstateApp.Infrastructure.Identity;
 
@@ -13,6 +14,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+
         services.AddDbContext<IdentityContext>(options =>
             options.UseSqlServer(
                 configuration.GetConnectionString("IdentityConnection"),
@@ -22,9 +25,9 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<IdentityContext>()
             .AddDefaultTokenProviders();
 
-        // Cuando se creen las implementaciones de los servicios, se registran aquí:
-        // services.AddTransient<IAuthService, AuthService>();
-        // services.AddTransient<IJwtTokenService, JwtTokenService>();
+        // Registrar servicios de la capa de Identity
+        services.AddTransient<IAuthService, AuthService>();
+        services.AddTransient<IJwtTokenService, JwtTokenService>();
 
         return services;
     }

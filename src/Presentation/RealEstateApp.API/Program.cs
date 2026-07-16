@@ -29,4 +29,22 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// ENDPOINT TEMPORAL PARA PROBAR EL CORREO
+app.MapGet("/test-email", async (RealEstateApp.Application.Interfaces.Shared.IEmailService emailService) =>
+{
+    try
+    {
+        await emailService.SendEmailAsync(
+            to: "cieloandujar067@gmail.com", 
+            subject: "Prueba Exitosa de Real Estate App", 
+            body: "<h1>¡Felicidades!</h1><p>Si estás leyendo esto, tu configuración SMTP de Gmail funciona a la perfección.</p>"
+        );
+        return Results.Ok("Correo enviado con éxito. Revisa tu bandeja de entrada.");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Error al enviar correo: {ex.Message}");
+    }
+});
+
 app.Run();

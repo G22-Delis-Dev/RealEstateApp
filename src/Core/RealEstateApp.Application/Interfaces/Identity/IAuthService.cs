@@ -1,11 +1,11 @@
-using System.Threading.Tasks;
+using RealEstateApp.Application.DTOs.Account;
 
 namespace RealEstateApp.Application.Interfaces.Identity;
 
 public interface IAuthService
 {
-    // Las firmas exactas dependerán de los DTOs que se creen posteriormente
-    // Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
-    // Task<string> RegisterAsync(RegisterRequest request, string origin);
-    // Task<string> ConfirmEmailAsync(string userId, string code);
+    Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
+    Task<string> RegisterDeveloperAsync(RegisterDeveloperRequestDto request, string origin);
+    Task<string> RegisterAdministratorAsync(RegisterAdministratorRequestDto request, string origin);
+    Task<string> ConfirmEmailAsync(string userId, string token);
 }
