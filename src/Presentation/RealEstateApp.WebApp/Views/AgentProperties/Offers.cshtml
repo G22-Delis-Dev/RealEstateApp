@@ -1,0 +1,49 @@
+﻿@model IEnumerable<RealEstateApp.Application.ViewModels.Offers.OfferViewModel>
+@{
+    ViewData["Title"] = "Ofertas recibidas";
+    int propertyId = ViewBag.PropertyId;
+}
+
+<div class="container mt-4">
+    <a asp-action="Index" class="btn btn-link">&larr; Volver</a>
+    <h4>Ofertas recibidas</h4>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <table class="table">
+        <thead><tr><th>Cliente</th><th>Fecha</th><th>Monto</th><th>Estado</th><th>Acción</th></tr></thead>
+        <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td>@o.ClientId</td>
+                    <td>@o.OfferedAt.ToString("dd/MM/yyyy")</td>
+                    <td>RD$ @o.Amount.ToString("N2")</td>
+                    <td>@o.Status</td>
+                    <td>
+                        @if (o.Status == "Pendiente")
+                        {
+                            <form asp-action="AcceptOffer" method="post" class="d-inline">
+                                <input type="hidden" name="offerId" value="@o.Id" />
+                                <input type="hidden" name="propertyId" value="@propertyId" />
+                                <button type="submit" class="btn btn-sm btn-success">Aceptar</button>
+                            </form>
+                            <form asp-action="RejectOffer" method="post" class="d-inline">
+                                <input type="hidden" name="offerId" value="@o.Id" />
+                                <input type="hidden" name="propertyId" value="@propertyId" />
+                                <button type="submit" class="btn btn-sm btn-danger">Rechazar</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

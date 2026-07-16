@@ -1,0 +1,43 @@
+﻿@model IEnumerable<RealEstateApp.Application.ViewModels.Agents.AgentListItemViewModel>
+@{
+    ViewData["Title"] = "Listado de agentes";
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <h4>Listado de agentes</h4>
+
+    <table class="table table-striped">
+        <thead><tr><th>Nombre</th><th>Apellido</th><th>Correo</th><th>Propiedades</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.FirstName</td>
+                    <td>@a.LastName</td>
+                    <td>@a.Email</td>
+                    <td>@a.PropertyCount</td>
+                    <td>
+                        <span class="badge @(a.IsActive ? "bg-success" : "bg-secondary")">
+                            @(a.IsActive ? "Activo" : "Inactivo")
+                        </span>
+                    </td>
+                    <td>
+                        <form asp-action="ToggleStatus" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Está seguro que desea @(a.IsActive ? "inactivar" : "activar") este agente?');">
+                            <input type="hidden" name="agentId" value="@a.Id" />
+                            <input type="hidden" name="activate" value="@(!a.IsActive)" />
+                            <button type="submit" class="btn btn-sm @(a.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                                @(a.IsActive ? "Inactivar" : "Activar")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

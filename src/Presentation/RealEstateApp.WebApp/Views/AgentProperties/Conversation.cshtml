@@ -1,0 +1,25 @@
+﻿@model IEnumerable<RealEstateApp.Application.ViewModels.Messages.MessageViewModel>
+@{
+    ViewData["Title"] = "Conversación";
+    int propertyId = ViewBag.PropertyId;
+    string clientId = ViewBag.ClientId;
+}
+
+<div class="container mt-4">
+    <a asp-action="Conversations" asp-route-propertyId="@propertyId" class="btn btn-link">&larr; Volver</a>
+    <h4>Conversación con el cliente</h4>
+
+    <div class="border rounded p-3 mb-3" style="max-height:300px; overflow-y:auto;">
+        @foreach (var m in Model)
+        {
+            <p><strong>@(m.SenderId == clientId ? "Cliente" : "Yo"):</strong> @m.Content <small class="text-muted">(@m.SentAt.ToString("dd/MM HH:mm"))</small></p>
+        }
+    </div>
+
+    <form asp-action="Reply" method="post" class="d-flex gap-2">
+        <input type="hidden" name="propertyId" value="@propertyId" />
+        <input type="hidden" name="clientId" value="@clientId" />
+        <input type="text" name="content" class="form-control" placeholder="Escribir respuesta..." />
+        <button type="submit" class="btn btn-primary">Enviar respuesta</button>
+    </form>
+</div>

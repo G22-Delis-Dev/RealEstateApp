@@ -1,8 +1,94 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<RealEstateApp.Application.ViewModels.Properties.PropertyViewModel>
+@{
+    ViewData["Title"] = "Propiedades disponibles";
+    var propertyTypes = ViewBag.PropertyTypes as List<RealEstateApp.Application.ViewModels.Properties.SelectOption>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+    @if (TempData["InfoMessage"] != null)
+    {
+        <div class="alert alert-info">@TempData["InfoMessage"]</div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <form asp-action="Index" method="get" class="d-flex gap-2">
+                <input type="text" name="code" class="form-control" placeholder="Código de propiedad" />
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        </div>
+
+        <div class="col-md-8">
+            <form asp-action="Filter" method="post" class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small">Tipo</label>
+                    <select name="PropertyTypeId" class="form-select">
+                        <option value="">Todos</option>
+                        @if (propertyTypes != null)
+                        {
+                            foreach (var t in propertyTypes)
+                            {
+                                <option value="@t.Id">@t.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Precio mín.</label>
+                    <input type="number" name="MinPrice" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Precio máx.</label>
+                    <input type="number" name="MaxPrice" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Habitaciones</label>
+                    <input type="number" name="Rooms" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Baños</label>
+                    <input type="number" name="Bathrooms" class="form-control" />
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-secondary w-100">Filtrar</button>
+                </div>
+            </form>
+            <a asp-action="Index" class="small">Limpiar filtros</a>
+        </div>
+    </div>
+
+    <h4>Propiedades disponibles</h4>
+
+    @if (!Model.Any())
+    {
+        <p class="text-muted">No se encontraron propiedades disponibles con los filtros seleccionados.</p>
+    }
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var p in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    @if (p.ImageUrls.Any())
+                    {
+                        <img src="@p.ImageUrls.First()" class="card-img-top" style="height:200px; object-fit:cover;" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@p.PropertyTypeName · @p.SaleTypeName</h5>
+                        <p class="card-text">
+                            <strong>RD$ @p.Price.ToString("N2")</strong><br />
+                            @p.Rooms hab. · @p.Bathrooms baños · @p.Size m²<br />
+                            <span class="text-muted">Código: @p.Code</span>
+                        </p>
+                        <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-outline-primary btn-sm">Ver detalle</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

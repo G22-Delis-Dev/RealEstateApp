@@ -1,0 +1,30 @@
+﻿@model IEnumerable<RealEstateApp.Application.ViewModels.Properties.PropertyViewModel>
+@{
+    ViewData["Title"] = "Propiedades disponibles";
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var p in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5>@p.PropertyTypeName · @p.SaleTypeName</h5>
+                        <p>RD$ @p.Price.ToString("N2")<br />@p.Rooms hab. · @p.Bathrooms baños</p>
+                        <form asp-action="ToggleFavorite" method="post" class="d-inline">
+                            <input type="hidden" name="propertyId" value="@p.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-warning">★ Favorito</button>
+                        </form>
+                        <a asp-action="PropertyDetail" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary">Ver detalle</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

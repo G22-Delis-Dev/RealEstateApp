@@ -1,0 +1,75 @@
+﻿@model RealEstateApp.Application.ViewModels.Properties.PropertyViewModel
+@{
+    ViewData["Title"] = "Detalle de propiedad";
+    var messages = ViewBag.Messages as IEnumerable<RealEstateApp.Application.ViewModels.Messages.MessageViewModel>;
+    var offers = ViewBag.Offers as IEnumerable<RealEstateApp.Application.ViewModels.Offers.OfferViewModel>;
+    bool canOffer = ViewBag.CanOffer;
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <h3>@Model.PropertyTypeName — @Model.SaleTypeName</h3>
+    <h4 class="text-primary">RD$ @Model.Price.ToString("N2")</h4>
+    <p>@Model.Description</p>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h5>Chat con el agente</h5>
+            <div class="border rounded p-3 mb-3" style="max-height:250px; overflow-y:auto;">
+                @if (messages != null)
+                {
+                    foreach (var m in messages)
+                    {
+                        <p><strong>@(m.SenderId == m.ClientId ? "Yo" : "Agente"):</strong> @m.Content</p>
+                    }
+                }
+            </div>
+            <form asp-action="SendMessage" method="post" class="d-flex gap-2">
+                <input type="hidden" name="propertyId" value="@Model.Id" />
+                <input type="text" name="content" class="form-control" placeholder="Escribir mensaje..." />
+                <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Mis ofertas</h5>
+            <table class="table table-sm">
+                <thead><tr><th>Fecha</th><th>Monto</th><th>Estado</th></tr></thead>
+                <tbody>
+                    @if (offers != null)
+                    {
+                        foreach (var o in offers)
+                        {
+                            <tr>
+                                <td>@o.OfferedAt.ToString("dd/MM/yyyy")</td>
+                                <td>RD$ @o.Amount.ToString("N2")</td>
+                                <td>@o.Status</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            @if (canOffer)
+            {
+                <form asp-action="SendOffer" method="post" class="d-flex gap-2 mt-3">
+                    <input type="hidden" name="PropertyId" value="@Model.Id" />
+                    <input type="number" step="0.01" name="Amount" class="form-control" placeholder="Monto de la oferta" />
+                    <button type="submit" class="btn btn-success">Enviar oferta</button>
+                </form>
+            }
+            else
+            {
+                <button class="btn btn-secondary mt-3" disabled>No disponible para nuevas ofertas</button>
+            }
+        </div>
+    </div>
+</div>

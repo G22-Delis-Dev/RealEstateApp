@@ -1,0 +1,49 @@
+﻿@model IEnumerable<RealEstateApp.Application.ViewModels.Properties.PropertyViewModel>
+@{
+    ViewData["Title"] = "Mantenimiento de propiedades";
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+    @if (TempData["InfoMessage"] != null)
+    {
+        <div class="alert alert-info">@TempData["InfoMessage"]</div>
+    }
+
+    <div class="d-flex justify-content-between mb-3">
+        <h4>Mis propiedades disponibles</h4>
+        <a asp-action="Create" class="btn btn-primary">+ Crear propiedad</a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr><th>Código</th><th>Tipo</th><th>Venta</th><th>Precio</th><th>Hab.</th><th>Baños</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Code</td>
+                    <td>@p.PropertyTypeName</td>
+                    <td>@p.SaleTypeName</td>
+                    <td>RD$ @p.Price.ToString("N2")</td>
+                    <td>@p.Rooms</td>
+                    <td>@p.Bathrooms</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                        <a asp-action="Conversations" asp-route-propertyId="@p.Id" class="btn btn-sm btn-outline-info">Mensajes</a>
+                        <a asp-action="Offers" asp-route-propertyId="@p.Id" class="btn btn-sm btn-outline-success">Ofertas</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
