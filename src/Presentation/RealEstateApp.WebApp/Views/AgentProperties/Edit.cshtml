@@ -1,0 +1,93 @@
+﻿@model RealEstateApp.Application.ViewModels.Properties.EditPropertyViewModel
+@{
+    ViewData["Title"] = "Editar propiedad";
+}
+
+<div class="container mt-4">
+    <h4>Editar propiedad — Código: @Model.Code</h4>
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Code" />
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Tipo de propiedad</label>
+                <select asp-for="PropertyTypeId" class="form-select">
+                    @foreach (var t in Model.AvailablePropertyTypes)
+                    {
+                        <option value="@t.Id">@t.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Tipo de venta</label>
+                <select asp-for="SaleTypeId" class="form-select">
+                    @foreach (var t in Model.AvailableSaleTypes)
+                    {
+                        <option value="@t.Id">@t.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Precio (DOP)</label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Descripción</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Tamaño (m²)</label>
+                <input asp-for="Size" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Habitaciones</label>
+                <input asp-for="Rooms" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Baños</label>
+                <input asp-for="Bathrooms" class="form-control" />
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Mejoras</label>
+                <select asp-for="ImprovementIds" class="form-select" multiple size="5">
+                    @foreach (var imp in Model.AvailableImprovements)
+                    {
+                        <option value="@imp.Id">@imp.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Imágenes actuales</label>
+                <div class="d-flex gap-2 mb-2">
+                    @foreach (var url in Model.CurrentImageUrls)
+                    {
+                        <img src="@url" style="width:80px; height:80px; object-fit:cover;" />
+                    }
+                </div>
+                <label class="form-label">Cargar nuevas imágenes (opcional, reemplaza las actuales)</label>
+                <input asp-for="NewImages" type="file" class="form-control" multiple accept=".jpg,.jpeg,.png" />
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a asp-action="Index" class="btn btn-secondary">Volver atrás</a>
+            <button type="submit" class="btn btn-primary">Guardar propiedad</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
