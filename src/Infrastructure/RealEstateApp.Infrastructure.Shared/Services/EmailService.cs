@@ -9,46 +9,61 @@ namespace RealEstateApp.Infrastructure.Shared.Services;
 
 public class EmailService : IEmailService
 {
-    private readonly EmailSettings _emailSettings;
+    private readonly EmailSettings _settings;
 
-    public EmailService(IOptions<EmailSettings> emailSettings)
+    public EmailService(IOptions<EmailSettings> settings)
     {
-        _emailSettings = emailSettings.Value;
+        _settings = settings.Value;
     }
 
-    public async Task SendEmailAsync(string to, string subject, string body)
+    public async Task SendAsync(string toEmail, string subject, string htmlBody)
     {
         var message = new MimeMessage();
-        message.From.Add(new MailboxAddress(_emailSettings.DisplayName, _emailSettings.EmailFrom));
-        message.To.Add(MailboxAddress.Parse(to));
+        message.From.Add(new MailboxAddress(_settings.SenderName, _settings.SenderEmail));
+        message.To.Add(MailboxAddress.Parse(toEmail));
         message.Subject = subject;
 
-        var builder = new BodyBuilder { HtmlBody = body };
-        message.Body = builder.ToMessageBody();
+        message.Body = new BodyBuilder
+        {
+            HtmlBody = htmlBody
+        }.ToMessageBody();
 
-        using var smtp = new SmtpClient();
-        
+        using var client = new SmtpClient();
+
         // APAGAR COMPLETAMENTE LA SEGURIDAD SSL LOCAL (Solo para desarrollo)
-        smtp.CheckCertificateRevocation = false;
-        smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
-        
-        // Usar SSL Directo forzado en lugar de Auto
-        await smtp.ConnectAsync(_emailSettings.SmtpHost, _emailSettings.SmtpPort, SecureSocketOptions.SslOnConnect);
-        await smtp.AuthenticateAsync(_emailSettings.SmtpUser, _emailSettings.SmtpPass);
-        
-        await smtp.SendAsync(message);
-        await smtp.DisconnectAsync(true);
+        client.CheckCertificateRevocation = false;
+        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+        await client.ConnectAsync(
+            _settings.SmtpHost,
+            _settings.SmtpPort,
+            SecureSocketOptions.SslOnConnect);
+
+        await client.AuthenticateAsync(_settings.Username, _settings.Password);
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
     }
 
-    public async Task SendAccountActivationEmailAsync(string email, string activationLink)
+    public async Task SendAccountActivationEmailAsync(string toEmail, string clientFirstName, string activationLink)
     {
-        string subject = "Confirma tu cuenta - RealEstateApp";
-        string body = $@"
-            <h2>¡Bienvenido a RealEstateApp!</h2>
-            <p>Para activar tu cuenta, haz clic en el siguiente enlace:</p>
-            <a href='{activationLink}'>Confirmar mi cuenta</a>
-            <p>Si no creaste esta cuenta, puedes ignorar este correo.</p>";
+        const string subject = "Activación de cuenta en RealEstateApp";
 
-        await SendEmailAsync(email, subject, body);
+        var htmlBody = $@"
+            <div style=""font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto;"">
+                <h2 style=""color:#16233B;"">Hola {clientFirstName},</h2>
+                <p>Su cuenta ha sido registrada correctamente en <strong>RealEstateApp</strong>.</p>
+                <p>Para activar su usuario y poder iniciar sesión, haga clic en el siguiente enlace:</p>
+                <p style=""margin: 24px 0;"">
+                    <a href=""{activationLink}""
+                       style=""background:#B8935B; color:#fff; padding:12px 24px; text-decoration:none; font-weight:bold;"">
+                       Activar mi cuenta
+                    </a>
+                </p>
+                <p style=""color:#5C6773; font-size:12px;"">
+                    Si usted no realizó este registro, puede ignorar este mensaje.
+                </p>
+            </div>";
+
+        await SendAsync(toEmail, subject, htmlBody);
     }
 }

@@ -79,7 +79,7 @@ public class AuthService : IAuthService
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(verificationToken));
         var activationLink = $"{origin}/api/Account/confirm-email?userId={user.Id}&token={encodedToken}";
 
-        await _emailService.SendAccountActivationEmailAsync(user.Email!, activationLink);
+        await _emailService.SendAccountActivationEmailAsync(user.Email!, user.FirstName, activationLink);
 
         return $"Usuario {request.UserName} registrado exitosamente. Revisa tu correo para activar tu cuenta.";
     }
@@ -123,5 +123,45 @@ public class AuthService : IAuthService
         await _userManager.UpdateAsync(user);
 
         return "Correo electrónico confirmado exitosamente. Tu cuenta está activa.";
+    }
+
+    public async Task<IEnumerable<UserSummary>> GetUsersByRoleAsync(string role)
+    {
+        var users = await _userManager.GetUsersInRoleAsync(role);
+        return users.Select(u => new UserSummary
+        {
+            Id = u.Id,
+            FirstName = u.FirstName,
+            LastName = u.LastName,
+            Email = u.Email!,
+            PhoneNumber = u.PhoneNumber,
+            PhotoUrl = null,
+            IsActive = u.IsActive
+        });
+    }
+
+    public async Task<UserSummary?> GetUserByIdInRoleAsync(string userId, string role)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return null;
+        if (!await _userManager.IsInRoleAsync(user, role)) return null;
+
+        return new UserSummary
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email!,
+            PhoneNumber = user.PhoneNumber,
+            PhotoUrl = null,
+            IsActive = user.IsActive
+        };
+    }
+
+    public async Task SetUserStatusAsync(string userId, bool isActive)
+    {
+        var user = await _userManager.FindByIdAsync(userId) ?? throw new Exception("Usuario no encontrado.");
+        user.IsActive = isActive;
+        await _userManager.UpdateAsync(user);
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using RealEstateApp.Application.Interfaces.Shared;
 using RealEstateApp.Infrastructure.Shared.Settings;
@@ -40,5 +41,19 @@ public class FileStorageService : IFileStorageService
         }
 
         return Task.CompletedTask;
+    }
+    public async Task<List<string>> SavePropertyImagesAsync(List<IFormFile> images)
+    {
+        var result = new List<string>();
+        foreach (var image in images)
+        {
+            if (image.Length > 0)
+            {
+                using var stream = image.OpenReadStream();
+                var url = await UploadFileAsync(stream, image.FileName, "Properties");
+                result.Add(url);
+            }
+        }
+        return result;
     }
 }

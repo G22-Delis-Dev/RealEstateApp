@@ -1,0 +1,92 @@
+﻿@model RealEstateApp.Application.ViewModels.Properties.CreatePropertyViewModel
+@{
+    ViewData["Title"] = "Crear propiedad";
+}
+
+<div class="container mt-4">
+    <h4>Crear propiedad</h4>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Tipo de propiedad</label>
+                <select asp-for="PropertyTypeId" class="form-select">
+                    @foreach (var t in Model.AvailablePropertyTypes)
+                    {
+                        <option value="@t.Id">@t.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="PropertyTypeId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Tipo de venta</label>
+                <select asp-for="SaleTypeId" class="form-select">
+                    @foreach (var t in Model.AvailableSaleTypes)
+                    {
+                        <option value="@t.Id">@t.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="SaleTypeId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Precio (DOP)</label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Descripción</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Tamaño (m²)</label>
+                <input asp-for="Size" class="form-control" />
+                <span asp-validation-for="Size" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Habitaciones</label>
+                <input asp-for="Rooms" class="form-control" />
+                <span asp-validation-for="Rooms" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Baños</label>
+                <input asp-for="Bathrooms" class="form-control" />
+                <span asp-validation-for="Bathrooms" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Mejoras</label>
+                <select asp-for="ImprovementIds" class="form-select" multiple size="5">
+                    @foreach (var imp in Model.AvailableImprovements)
+                    {
+                        <option value="@imp.Id">@imp.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="ImprovementIds" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Imágenes (1 a 4)</label>
+                <input asp-for="Images" type="file" class="form-control" multiple accept=".jpg,.jpeg,.png" />
+                <span asp-validation-for="Images" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a asp-action="Index" class="btn btn-secondary">Volver atrás</a>
+            <button type="submit" class="btn btn-primary">Crear propiedad</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

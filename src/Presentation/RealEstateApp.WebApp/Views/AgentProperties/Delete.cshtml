@@ -1,0 +1,14 @@
+﻿@model RealEstateApp.Application.ViewModels.Properties.PropertyViewModel
+@{
+    ViewData["Title"] = "Eliminar propiedad";
+}
+
+<div class="container mt-4">
+    <h4>¿Está seguro que desea eliminar esta propiedad?</h4>
+    <p><strong>Código:</strong> @Model.Code — @Model.PropertyTypeName — RD$ @Model.Price.ToString("N2")</p>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-danger">Aceptar</button>
+    </form>
+</div>

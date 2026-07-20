@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RealEstateApp.Infrastructure.Shared.Settings;
 using RealEstateApp.Application.Interfaces.Shared;
-using RealEstateApp.Infrastructure.Shared.Services; 
+using RealEstateApp.Infrastructure.Shared.Services;
+using RealEstateApp.Infrastructure.Shared.Settings;
 
 namespace RealEstateApp.Infrastructure.Shared;
 

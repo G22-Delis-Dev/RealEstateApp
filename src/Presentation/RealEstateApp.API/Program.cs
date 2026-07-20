@@ -34,10 +34,10 @@ app.MapGet("/test-email", async (RealEstateApp.Application.Interfaces.Shared.IEm
 {
     try
     {
-        await emailService.SendEmailAsync(
-            to: "cieloandujar067@gmail.com", 
+        await emailService.SendAsync(
+            toEmail: "cieloandujar067@gmail.com", 
             subject: "Prueba Exitosa de Real Estate App", 
-            body: "<h1>¡Felicidades!</h1><p>Si estás leyendo esto, tu configuración SMTP de Gmail funciona a la perfección.</p>"
+            htmlBody: "<h1>¡Felicidades!</h1><p>Si estás leyendo esto, tu configuración SMTP de Gmail funciona a la perfección.</p>"
         );
         return Results.Ok("Correo enviado con éxito. Revisa tu bandeja de entrada.");
     }
