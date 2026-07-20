@@ -84,6 +84,29 @@ public class AuthService : IAuthService
         return $"Usuario {request.UserName} registrado exitosamente. Revisa tu correo para activar tu cuenta.";
     }
 
+    public async Task<string> RegisterAgentAsync(RegisterDeveloperRequestDto request)
+    {
+        var user = new ApplicationUser
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            UserName = request.UserName,
+            Email = request.Email,
+            PhoneNumber = request.PhoneNumber,
+            IsActive = false // Los agentes quedan inactivos hasta que un admin los active
+        };
+
+        var result = await _userManager.CreateAsync(user, request.Password);
+
+        if (!result.Succeeded)
+            throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+        await _userManager.AddToRoleAsync(user, "Agent");
+
+        // Los agentes NO reciben correo de activación; un admin debe activarlos manualmente
+        return $"Agente {request.UserName} registrado exitosamente. Un administrador debe activar su cuenta.";
+    }
+
     public async Task<string> RegisterAdministratorAsync(RegisterAdministratorRequestDto request, string origin)
     {
         var user = new ApplicationUser

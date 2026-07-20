@@ -5,6 +5,7 @@ public interface IAuthService
 {
     Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
     Task<string> RegisterDeveloperAsync(RegisterDeveloperRequestDto request, string origin);
+    Task<string> RegisterAgentAsync(RegisterDeveloperRequestDto request);
     Task<string> RegisterAdministratorAsync(RegisterAdministratorRequestDto request, string origin);
     Task<string> ConfirmEmailAsync(string userId, string token);
     Task<IEnumerable<UserSummary>> GetUsersByRoleAsync(string role);
