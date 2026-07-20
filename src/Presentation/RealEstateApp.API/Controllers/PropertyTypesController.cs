@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Catalogs;
 using RealEstateApp.Application.Interfaces.Services;
-using RealEstateApp.Application.ViewModels.Catalogs;
 using RealEstateApp.Domain.Exceptions;
 
 namespace RealEstateApp.API.Controllers;
@@ -38,13 +37,12 @@ public class PropertyTypesController : BaseApiController
 
     [HttpPost]
     [Authorize(Roles = "Administrador")]
-    public async Task<ActionResult<PropertyTypeDto>> Create([FromBody] PropertyTypeViewModel request)
+    public async Task<ActionResult<PropertyTypeDto>> Create([FromBody] PropertyTypeRequestDto request)
     {
         try
         {
-            var created = await _propertyTypeService.CreateAsync(request);
-            var dto = new PropertyTypeDto { Id = created.Id, Name = created.Name, Description = created.Description };
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, dto);
+            var created = await _propertyTypeService.CreateForApiAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
         catch (BusinessRuleValidationException ex)
         {
@@ -54,11 +52,11 @@ public class PropertyTypesController : BaseApiController
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Administrador")]
-    public async Task<IActionResult> Update(int id, [FromBody] PropertyTypeViewModel request)
+    public async Task<IActionResult> Update(int id, [FromBody] PropertyTypeRequestDto request)
     {
         try
         {
-            await _propertyTypeService.UpdateAsync(id, request);
+            await _propertyTypeService.UpdateForApiAsync(id, request);
             return Ok(new { message = "El tipo de propiedad fue actualizado correctamente." });
         }
         catch (BusinessRuleValidationException ex)

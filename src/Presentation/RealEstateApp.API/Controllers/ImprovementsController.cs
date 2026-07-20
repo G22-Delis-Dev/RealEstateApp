@@ -38,13 +38,12 @@ public class ImprovementsController : BaseApiController
 
     [HttpPost]
     [Authorize(Roles = "Administrador")]
-    public async Task<ActionResult<ImprovementDto>> Create([FromBody] ImprovementViewModel request)
+    public async Task<ActionResult<ImprovementDto>> Create([FromBody] ImprovementRequestDto request)
     {
         try
         {
-            var created = await _improvementService.CreateAsync(request);
-            var dto = new ImprovementDto { Id = created.Id, Name = created.Name, Description = created.Description };
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, dto);
+            var created = await _improvementService.CreateForApiAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
         catch (BusinessRuleValidationException ex)
         {
@@ -54,11 +53,11 @@ public class ImprovementsController : BaseApiController
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Administrador")]
-    public async Task<IActionResult> Update(int id, [FromBody] ImprovementViewModel request)
+    public async Task<IActionResult> Update(int id, [FromBody] ImprovementRequestDto request)
     {
         try
         {
-            await _improvementService.UpdateAsync(id, request);
+            await _improvementService.UpdateForApiAsync(id, request);
             return Ok(new { message = "La mejora fue actualizada correctamente." });
         }
         catch (BusinessRuleValidationException ex)

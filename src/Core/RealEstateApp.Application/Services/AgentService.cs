@@ -1,6 +1,6 @@
-﻿// Services/AgentService.cs
-using AutoMapper;
+﻿using AutoMapper;
 using RealEstateApp.Application.Common.Exceptions;
+using RealEstateApp.Application.DTOs.Properties;
 using RealEstateApp.Application.Interfaces.Identity;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.ViewModels.Agents;
@@ -14,7 +14,7 @@ public class AgentService : IAgentService
     private readonly IAgentQueryRepository _agentQueryRepository;
     private readonly IPropertyAdminRepository _propertyAdminRepository;
     private readonly IPropertyRepository _propertyRepository;
-    private readonly IAuthService _authService; // consulta datos de Identity vía interfaz (definida por Sky)
+    private readonly IAuthService _authService;
     private readonly IMapper _mapper;
 
     public AgentService(
@@ -80,6 +80,15 @@ public class AgentService : IAgentService
 
         var properties = await _propertyRepository.GetByAgentIdAsync(agentId);
         return _mapper.Map<IEnumerable<PropertyViewModel>>(properties);
+    }
+
+    public async Task<IEnumerable<PropertyDto>> GetAgentPropertiesForApiAsync(string agentId)
+    {
+        var agent = await _authService.GetUserByIdInRoleAsync(agentId, "Agente")
+            ?? throw new NotFoundException("Agente", agentId);
+
+        var properties = await _propertyRepository.GetByAgentIdAsync(agentId);
+        return _mapper.Map<IEnumerable<PropertyDto>>(properties);
     }
 
     public async Task ChangeStatusAsync(string agentId, bool isActive)

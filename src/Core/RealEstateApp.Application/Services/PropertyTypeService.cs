@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿// Services/PropertyTypeService.cs
+using AutoMapper;
 using RealEstateApp.Application.Common.Exceptions;
+using RealEstateApp.Application.DTOs.Catalogs;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.ViewModels.Catalogs;
 using RealEstateApp.Domain.Factories.Interfaces;
@@ -47,6 +49,35 @@ public class PropertyTypeService : GenericService<PropertyTypeViewModel, Domain.
 
         propertyType.Name = model.Name.Trim();
         propertyType.Description = model.Description;
+
+        _propertyTypeRepository.Update(propertyType);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<PropertyTypeDto> CreateForApiAsync(PropertyTypeRequestDto request)
+    {
+        var exists = await _propertyTypeRepository.NameExistsAsync(request.Name);
+        var propertyType = _propertyTypeFactory.Create(request.Name, request.Description, exists);
+
+        await _propertyTypeRepository.AddAsync(propertyType);
+        await _unitOfWork.SaveChangesAsync();
+
+        return _mapper.Map<PropertyTypeDto>(propertyType);
+    }
+
+    public async Task UpdateForApiAsync(int id, PropertyTypeRequestDto request)
+    {
+        var propertyType = await _propertyTypeRepository.GetByIdAsync(id)
+            ?? throw new NotFoundException(nameof(Domain.Entities.PropertyType), id);
+
+        var exists = await _propertyTypeRepository.NameExistsAsync(request.Name, excludeId: id);
+
+        Domain.Rules.BusinessRuleValidator.CheckRules(
+            new Domain.Rules.Catalog.NameMustNotBeEmptyOrWhitespaceRule(request.Name),
+            new Domain.Rules.Catalog.NameMustBeUniqueRule(exists, "tipo de propiedad"));
+
+        propertyType.Name = request.Name.Trim();
+        propertyType.Description = request.Description;
 
         _propertyTypeRepository.Update(propertyType);
         await _unitOfWork.SaveChangesAsync();

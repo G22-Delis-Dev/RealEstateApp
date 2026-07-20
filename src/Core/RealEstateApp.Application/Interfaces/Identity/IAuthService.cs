@@ -1,4 +1,5 @@
 using RealEstateApp.Application.DTOs.Account;
+
 namespace RealEstateApp.Application.Interfaces.Identity;
 
 public interface IAuthService

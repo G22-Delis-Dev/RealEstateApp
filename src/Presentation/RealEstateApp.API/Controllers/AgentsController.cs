@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Agents;
+using RealEstateApp.Application.DTOs.Properties;
 using RealEstateApp.Application.Interfaces.Services;
 
 namespace RealEstateApp.API.Controllers;
@@ -62,13 +63,13 @@ public class AgentsController : BaseApiController
     // GET: api/agents/{id}/properties
     [HttpGet("{id}/properties")]
     [Authorize(Roles = "Administrador,Desarrollador")]
-    public async Task<IActionResult> GetAgentProperty(string id)
+    public async Task<ActionResult<IEnumerable<PropertyDto>>> GetAgentProperty(string id)
     {
         var agent = await _agentService.GetByIdAsync(id);
         if (agent is null)
             return NotFound(new { message = "El agente solicitado no existe." });
 
-        var properties = await _agentService.GetAgentPropertiesAsync(id);
+        var properties = await _agentService.GetAgentPropertiesForApiAsync(id);
         if (!properties.Any())
             return NoContent();
 

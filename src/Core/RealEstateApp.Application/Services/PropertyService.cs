@@ -1,6 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
 using RealEstateApp.Application.Common.Exceptions;
 using RealEstateApp.Application.DTOs.Properties;
+using RealEstateApp.Application.Interfaces.Identity;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.Interfaces.Shared;
 using RealEstateApp.Application.ViewModels.Properties;
@@ -19,6 +20,7 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
     private readonly IPropertyCodeDomainService _propertyCodeDomainService;
     private readonly IPropertyDomainService _propertyDomainService;
     private readonly IFileStorageService _fileStorageService;
+    private readonly IAuthService _authService;
 
     public PropertyService(
         IPropertyRepository propertyRepository,
@@ -28,6 +30,7 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
         IPropertyCodeDomainService propertyCodeDomainService,
         IPropertyDomainService propertyDomainService,
         IFileStorageService fileStorageService,
+        IAuthService authService,
         IUnitOfWork unitOfWork,
         IMapper mapper)
         : base(propertyRepository, unitOfWork, mapper)
@@ -39,6 +42,7 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
         _propertyCodeDomainService = propertyCodeDomainService;
         _propertyDomainService = propertyDomainService;
         _fileStorageService = fileStorageService;
+        _authService = authService;
     }
 
     public override async Task<PropertyViewModel?> GetByIdAsync(int id)
@@ -123,22 +127,44 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
         await _unitOfWork.SaveChangesAsync();
     }
 
+    // Services/PropertyService.cs — reemplaza estos 3 métodos por esta versión
+
     public async Task<IEnumerable<PropertyDto>> GetAllForApiAsync()
     {
         var properties = await _propertyRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<PropertyDto>>(properties);
+        var dtos = _mapper.Map<List<PropertyDto>>(properties);
+
+        foreach (var dto in dtos)
+        {
+            var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
+            dto.AgentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
+        }
+
+        return dtos;
     }
 
     public async Task<PropertyDto?> GetByIdForApiAsync(int id)
     {
         var property = await _propertyRepository.GetByIdAsync(id);
-        return property is null ? null : _mapper.Map<PropertyDto>(property);
+        if (property is null) return null;
+
+        var dto = _mapper.Map<PropertyDto>(property);
+        var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
+        dto.AgentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
+
+        return dto;
     }
 
     public async Task<PropertyDto?> GetByCodeForApiAsync(string code)
     {
         var property = await _propertyRepository.GetByCodeAsync(code);
-        return property is null ? null : _mapper.Map<PropertyDto>(property);
+        if (property is null) return null;
+
+        var dto = _mapper.Map<PropertyDto>(property);
+        var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
+        dto.AgentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
+
+        return dto;
     }
 
     public async Task DeleteAsync(int id, string agentId)

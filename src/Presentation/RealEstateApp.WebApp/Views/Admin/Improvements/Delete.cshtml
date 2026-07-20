@@ -1,0 +1,15 @@
+﻿@model RealEstateApp.Application.ViewModels.Catalogs.ImprovementViewModel
+@{
+    ViewData["Title"] = "Eliminar mejora";
+}
+
+<div class="container mt-4">
+    <h4>¿Está seguro que desea eliminar esta mejora?</h4>
+    <p><strong>@Model.Name</strong></p>
+    <p class="text-muted small">Las propiedades asociadas no se eliminarán, solo se removerá la relación con esta mejora.</p>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-danger">Aceptar</button>
+    </form>
+</div>

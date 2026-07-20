@@ -19,18 +19,18 @@ public class PropertiesController : BaseApiController
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PropertyDto>>> List()
     {
-        var properties = await _propertyService.GetAllAsync();
+        var properties = await _propertyService.GetAllForApiAsync();
         if (!properties.Any())
             return NoContent();
 
-        return Ok(properties); // El mapeo a PropertyDto ocurre dentro del Service/AutoMapper
+        return Ok(properties);
     }
 
     // GET: api/properties/5
     [HttpGet("{id:int}")]
     public async Task<ActionResult<PropertyDto>> GetById(int id)
     {
-        var property = await _propertyService.GetByIdAsync(id);
+        var property = await _propertyService.GetByIdForApiAsync(id);
         if (property is null)
             return NotFound(new { message = "La propiedad solicitada no existe." });
 
@@ -41,7 +41,7 @@ public class PropertiesController : BaseApiController
     [HttpGet("code/{code}")]
     public async Task<ActionResult<PropertyDto>> GetByCode(string code)
     {
-        var property = await _propertyService.GetByCodeAsync(code);
+        var property = await _propertyService.GetByCodeForApiAsync(code);
         if (property is null)
             return NotFound(new { message = "No existe una propiedad registrada con el código enviado." });
 

@@ -38,13 +38,12 @@ public class SaleTypesController : BaseApiController
 
     [HttpPost]
     [Authorize(Roles = "Administrador")]
-    public async Task<ActionResult<SaleTypeDto>> Create([FromBody] SaleTypeViewModel request)
+    public async Task<ActionResult<SaleTypeDto>> Create([FromBody] SaleTypeRequestDto request)
     {
         try
         {
-            var created = await _saleTypeService.CreateAsync(request);
-            var dto = new SaleTypeDto { Id = created.Id, Name = created.Name, Description = created.Description };
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, dto);
+            var created = await _saleTypeService.CreateForApiAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
         catch (BusinessRuleValidationException ex)
         {
@@ -54,11 +53,11 @@ public class SaleTypesController : BaseApiController
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Administrador")]
-    public async Task<IActionResult> Update(int id, [FromBody] SaleTypeViewModel request)
+    public async Task<IActionResult> Update(int id, [FromBody] SaleTypeRequestDto request)
     {
         try
         {
-            await _saleTypeService.UpdateAsync(id, request);
+            await _saleTypeService.UpdateForApiAsync(id, request);
             return Ok(new { message = "El tipo de venta fue actualizado correctamente." });
         }
         catch (BusinessRuleValidationException ex)
@@ -77,4 +76,6 @@ public class SaleTypesController : BaseApiController
         await _saleTypeService.DeleteAsync(id);
         return NoContent();
     }
+
+
 }
