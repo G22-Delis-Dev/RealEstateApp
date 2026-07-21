@@ -65,6 +65,7 @@ public class AuthService : IAuthService
             UserName = request.UserName,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
+            ProfilePicture = request.ProfilePicture,
             IsActive = false
         };
 
@@ -94,6 +95,7 @@ public class AuthService : IAuthService
             UserName = request.UserName,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
+            ProfilePicture = request.ProfilePicture,
             IsActive = false // Los agentes quedan inactivos hasta que un admin los active
         };
 
