@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Agents;
 using RealEstateApp.Application.Interfaces.Services;
@@ -77,7 +77,7 @@ public class AgentsController : BaseApiController
 
     // PATCH: api/agents/{id}/status
     [HttpPatch("{id}/status")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ChangeStatus(string id, [FromBody] ChangeAgentStatusRequest request)
     {
         var agent = await _agentService.GetByIdAsync(id);

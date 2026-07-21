@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Catalogs;
 using RealEstateApp.Application.Interfaces.Services;
@@ -37,7 +37,7 @@ public class ImprovementsController : BaseApiController
     }
 
     [HttpPost]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ImprovementDto>> Create([FromBody] ImprovementViewModel request)
     {
         try
@@ -53,7 +53,7 @@ public class ImprovementsController : BaseApiController
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, [FromBody] ImprovementViewModel request)
     {
         try
@@ -68,7 +68,7 @@ public class ImprovementsController : BaseApiController
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var improvement = await _improvementService.GetByIdAsync(id);

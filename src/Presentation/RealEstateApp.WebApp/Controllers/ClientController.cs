@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Common.Exceptions;
 using RealEstateApp.Application.Interfaces.Services;
@@ -6,7 +6,7 @@ using RealEstateApp.Application.ViewModels.Offers;
 
 namespace RealEstateApp.WebApp.Controllers;
 
-[Authorize(Roles = "Cliente")]
+[Authorize(Roles = "Client")]
 public class ClientController : BaseController
 {
     private readonly IPropertyService _propertyService;
