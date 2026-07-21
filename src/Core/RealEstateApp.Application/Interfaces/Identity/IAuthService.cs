@@ -11,6 +11,10 @@ public interface IAuthService
     Task<IEnumerable<UserSummary>> GetUsersByRoleAsync(string role);
     Task<UserSummary?> GetUserByIdInRoleAsync(string userId, string role);
     Task SetUserStatusAsync(string userId, bool isActive);
+    Task<bool> CedulaExistsAsync(string idCard);
+    Task<bool> EmailExistsAsync(string email);
+    Task<bool> UsernameExistsAsync(string username);
+    Task<int> CountActiveAdminUsersAsync();
 }
 
 public class UserSummary

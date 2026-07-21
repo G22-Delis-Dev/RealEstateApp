@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Infrastructure\RealEstateApp.Infrastructure.Shared\RealEstateApp.Infrastructure.Shared.csproj" />
+    <ProjectReference Include="..\..\src\Core\RealEstateApp.Domain\RealEstateApp.Domain.csproj" />
   </ItemGroup>
 
 </Project>
