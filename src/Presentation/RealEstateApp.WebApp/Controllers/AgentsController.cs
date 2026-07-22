@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Interfaces.Services;
 
 namespace RealEstateApp.WebApp.Controllers;
@@ -15,7 +15,7 @@ public class AgentsController : BaseController
     // GET: /Agents
     public async Task<IActionResult> Index(string? name)
     {
-        var agents = await _agentService.GetAllAsync(); // ya viene filtrado a activos según implementación de Sky en IAuthService
+        var agents = await _agentService.GetAllAsync();
         var activeAgents = agents.Where(a => a.IsActive);
 
         if (!string.IsNullOrWhiteSpace(name))

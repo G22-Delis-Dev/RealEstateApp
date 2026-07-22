@@ -21,7 +21,6 @@ public class AccountController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto request, [FromQuery] string channel = "API")
     {
-        // channel = "API" (Postman/desarrolladores) o "WebApp" (MVC App)
         var response = await _accountService.LoginAsync(request, channel);
         return Ok(response);
     }

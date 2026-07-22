@@ -13,16 +13,19 @@ public class PropertyTypeService : GenericService<PropertyTypeViewModel, Domain.
 {
     private readonly IPropertyTypeRepository _propertyTypeRepository;
     private readonly IPropertyTypeFactory _propertyTypeFactory;
+    private readonly IPropertyAdminRepository _propertyAdminRepository;
 
     public PropertyTypeService(
         IPropertyTypeRepository propertyTypeRepository,
         IPropertyTypeFactory propertyTypeFactory,
+        IPropertyAdminRepository propertyAdminRepository,
         IUnitOfWork unitOfWork,
         IMapper mapper)
         : base(propertyTypeRepository, unitOfWork, mapper)
     {
         _propertyTypeRepository = propertyTypeRepository;
         _propertyTypeFactory = propertyTypeFactory;
+        _propertyAdminRepository = propertyAdminRepository;
     }
 
     public async Task<PropertyTypeViewModel> CreateAsync(PropertyTypeViewModel model)
@@ -80,6 +83,21 @@ public class PropertyTypeService : GenericService<PropertyTypeViewModel, Domain.
         propertyType.Description = request.Description;
 
         _propertyTypeRepository.Update(propertyType);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    // ← Sobreescribe el DeleteAsync genérico para manejar la cascada real
+    public override async Task DeleteAsync(int id)
+    {
+        var propertyType = await _propertyTypeRepository.GetByIdAsync(id)
+            ?? throw new NotFoundException(nameof(Domain.Entities.PropertyType), id);
+
+        var affectedProperties = await _propertyAdminRepository.GetByPropertyTypeIdAsync(id);
+
+        foreach (var property in affectedProperties)
+            await _propertyAdminRepository.DeleteWithRelatedDataAsync(property.Id);
+
+        _propertyTypeRepository.Remove(propertyType);
         await _unitOfWork.SaveChangesAsync();
     }
 }

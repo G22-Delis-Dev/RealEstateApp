@@ -20,7 +20,7 @@ public class EmailServiceManualTest
             SenderName = "RealEstateApp Test",
             SenderEmail = "delismanuel13@gmail.com",
             SmtpHost = "smtp.gmail.com",
-            SmtpPort = 587,
+            SmtpPort = 465,
             UseSsl = true,
             Username = "delismanuel13@gmail.com", 
             Password = config["EmailSettings:Password"]!
@@ -47,7 +47,7 @@ public class EmailServiceManualTest
             SenderName = "RealEstateApp Test",
             SenderEmail = "delismanuel13@gmail.com",
             SmtpHost = "smtp.gmail.com",
-            SmtpPort = 587,
+            SmtpPort = 465,
             UseSsl = true,
             Username = "delismanuel13@gmail.com", 
             Password = config["EmailSettings:Password"]!

@@ -12,16 +12,19 @@ public class SaleTypeService : GenericService<SaleTypeViewModel, Domain.Entities
 {
     private readonly ISaleTypeRepository _saleTypeRepository;
     private readonly ISaleTypeFactory _saleTypeFactory;
+    private readonly IPropertyAdminRepository _propertyAdminRepository;
 
     public SaleTypeService(
         ISaleTypeRepository saleTypeRepository,
         ISaleTypeFactory saleTypeFactory,
+        IPropertyAdminRepository propertyAdminRepository,
         IUnitOfWork unitOfWork,
         IMapper mapper)
         : base(saleTypeRepository, unitOfWork, mapper)
     {
         _saleTypeRepository = saleTypeRepository;
         _saleTypeFactory = saleTypeFactory;
+        _propertyAdminRepository = propertyAdminRepository;
     }
 
     public async Task<SaleTypeViewModel> CreateAsync(SaleTypeViewModel model)
@@ -78,6 +81,21 @@ public class SaleTypeService : GenericService<SaleTypeViewModel, Domain.Entities
         saleType.Description = request.Description;
 
         _saleTypeRepository.Update(saleType);
+        await _unitOfWork.SaveChangesAsync();
+
+    }
+
+    public override async Task DeleteAsync(int id)
+    {
+        var saleType = await _saleTypeRepository.GetByIdAsync(id)
+            ?? throw new NotFoundException(nameof(Domain.Entities.SaleType), id);
+
+        var affectedProperties = await _propertyAdminRepository.GetBySaleTypeIdAsync(id);
+
+        foreach (var property in affectedProperties)
+            await _propertyAdminRepository.DeleteWithRelatedDataAsync(property.Id);
+
+        _saleTypeRepository.Remove(saleType);
         await _unitOfWork.SaveChangesAsync();
     }
 }

@@ -20,7 +20,7 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
     private readonly IPropertyCodeDomainService _propertyCodeDomainService;
     private readonly IPropertyDomainService _propertyDomainService;
     private readonly IFileStorageService _fileStorageService;
-    private readonly IAuthService _authService;
+    private readonly IAuthService _authService; // ← nuevo
 
     public PropertyService(
         IPropertyRepository propertyRepository,
@@ -30,7 +30,7 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
         IPropertyCodeDomainService propertyCodeDomainService,
         IPropertyDomainService propertyDomainService,
         IFileStorageService fileStorageService,
-        IAuthService authService,
+        IAuthService authService, // ← nuevo
         IUnitOfWork unitOfWork,
         IMapper mapper)
         : base(propertyRepository, unitOfWork, mapper)
@@ -42,7 +42,7 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
         _propertyCodeDomainService = propertyCodeDomainService;
         _propertyDomainService = propertyDomainService;
         _fileStorageService = fileStorageService;
-        _authService = authService;
+        _authService = authService; // ← nuevo
     }
 
     public override async Task<PropertyViewModel?> GetByIdAsync(int id)
@@ -127,18 +127,12 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
         await _unitOfWork.SaveChangesAsync();
     }
 
-    // Services/PropertyService.cs — reemplaza estos 3 métodos por esta versión
-
     public async Task<IEnumerable<PropertyDto>> GetAllForApiAsync()
     {
         var properties = await _propertyRepository.GetAllAsync();
         var dtos = _mapper.Map<List<PropertyDto>>(properties);
 
-        foreach (var dto in dtos)
-        {
-            var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
-            dto.AgentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
-        }
+        await PopulateAgentNamesAsync(dtos);
 
         return dtos;
     }
@@ -149,8 +143,7 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
         if (property is null) return null;
 
         var dto = _mapper.Map<PropertyDto>(property);
-        var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
-        dto.AgentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
+        await PopulateAgentNameAsync(dto);
 
         return dto;
     }
@@ -161,12 +154,37 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
         if (property is null) return null;
 
         var dto = _mapper.Map<PropertyDto>(property);
-        var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
-        dto.AgentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
+        await PopulateAgentNameAsync(dto);
 
         return dto;
     }
 
     public async Task DeleteAsync(int id, string agentId)
         => await _propertyDomainService.DeletePropertyWithValidationAsync(id, agentId);
+
+    // ===== Helpers privados para completar AgentName (Domain no conoce Identity) =====
+
+    private async Task PopulateAgentNameAsync(PropertyDto dto)
+    {
+        var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
+        dto.AgentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
+    }
+
+    private async Task PopulateAgentNamesAsync(List<PropertyDto> dtos)
+    {
+        // Evita N llamadas repetidas si varias propiedades comparten el mismo agente
+        var agentCache = new Dictionary<string, string>();
+
+        foreach (var dto in dtos)
+        {
+            if (!agentCache.TryGetValue(dto.AgentId, out var agentName))
+            {
+                var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
+                agentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
+                agentCache[dto.AgentId] = agentName;
+            }
+
+            dto.AgentName = agentName;
+        }
+    }
 }

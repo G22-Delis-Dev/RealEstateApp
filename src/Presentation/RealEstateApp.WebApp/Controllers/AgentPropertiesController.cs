@@ -94,9 +94,14 @@ public class AgentPropertiesController : BaseController
         {
             Id = property.Id,
             Code = property.Code,
+            PropertyTypeId = property.PropertyTypeId,
+            SaleTypeId = property.SaleTypeId,
             Price = property.Price,
             Description = property.Description,
             Size = property.Size,
+            Rooms = property.Rooms,
+            Bathrooms = property.Bathrooms,
+            ImprovementIds = property.ImprovementIds,
             CurrentImageUrls = property.ImageUrls
         };
 

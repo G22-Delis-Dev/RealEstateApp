@@ -15,9 +15,12 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<Property, PropertyViewModel>()
+            .ForMember(d => d.PropertyTypeId, o => o.MapFrom(s => s.PropertyTypeId))
             .ForMember(d => d.PropertyTypeName, o => o.MapFrom(s => s.PropertyType.Name))
+            .ForMember(d => d.SaleTypeId, o => o.MapFrom(s => s.SaleTypeId))
             .ForMember(d => d.SaleTypeName, o => o.MapFrom(s => s.SaleType.Name))
             .ForMember(d => d.ImageUrls, o => o.MapFrom(s => s.Images.Select(i => i.Url)))
+            .ForMember(d => d.ImprovementIds, o => o.MapFrom(s => s.Improvements.Select(i => i.Id)))
             .ForMember(d => d.Improvements, o => o.MapFrom(s => s.Improvements.Select(i => i.Name)))
             .ForMember(d => d.Status, o => o.MapFrom(s => s.Status.ToString()));
 
