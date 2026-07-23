@@ -1,55 +1,43 @@
-# Reporte de Estado y Evaluaci√≥n: RealEstateApp
+# Reporte de Estado y EvaluaciÛn: RealEstateApp
 
-Este documento resume el progreso actual del proyecto contra los criterios de evaluaci√≥n especificados en las r√∫bricas (`RealEstateApp_Evaluaciones_Combinadas.md` y `Mini proyecto final - RealEstateApp (2).md`).
+Este documento resume el progreso actual del proyecto contra los criterios de evaluaciÛn especificados en las r˙bricas (RealEstateApp_Evaluaciones_Combinadas.md y Mini proyecto final - RealEstateApp (2).md).
 
-## ‚úÖ Criterios Cumplidos (Implementados y Validados)
+## ? Criterios Cumplidos (Implementados y Validados)
 
 ### Arquitectura y Estructura (Onion Architecture)
-- **Separaci√≥n correcta entre WebApp y API**: Ambos proyectos existen de manera independiente y consumen la capa `Application` directamente, sin peticiones HTTP redundantes entre ellos.
-- **Inyecci√≥n de Dependencias**: Registros correctos en `Program.cs` (`AddApplicationLayer`, `AddPersistenceInfrastructure`, `AddIdentityInfrastructure`, `AddSharedInfrastructure`).
-- **Patrones de Dise√±o**: Implementaci√≥n de repositorios gen√©ricos y servicios de dominio aislados en sus respectivas capas.
-- **Mapeos Funcionales**: `AutoMapper` configurado para manejar `ViewModels` en MVC y `DTOs` en el API.
+- **SeparaciÛn correcta entre WebApp y API**: Ambos proyectos existen de manera independiente y consumen la capa Application directamente, sin peticiones HTTP redundantes entre ellos.
+- **InyecciÛn de Dependencias**: Registros correctos en Program.cs (AddApplicationLayer, AddPersistenceInfrastructure, AddIdentityInfrastructure, AddSharedInfrastructure).
+- **Patrones de DiseÒo**: ImplementaciÛn de repositorios genÈricos y servicios de dominio aislados en sus respectivas capas.
+- **Mapeos Funcionales**: AutoMapper configurado para manejar ViewModels en MVC y DTOs en el API.
 
 ### Web API (Back-End)
 - **Seguridad y Control de Acceso**:
-  - `AccountController` expone endpoints protegidos para autenticaci√≥n JWT.
-  - Atributos `[Authorize(Roles = "...")]` funcionales y respetando la separaci√≥n entre Desarrolladores, Administradores, Clientes y Agentes.
+  - AccountController expone endpoints protegidos para autenticaciÛn JWT.
+  - Atributos [Authorize(Roles = "...")] funcionales y respetando la separaciÛn entre Desarrolladores, Administradores, Clientes y Agentes.
   - Bloqueo para evitar que Clientes y Agentes usen la API.
 - **Respuestas y Manejo de Errores**:
-  - Los controladores (`Properties`, `Agents`, `Improvements`, `PropertyTypes`, `SaleTypes`) cumplen devolviendo los Status Codes correctos (200, 201, 204, 400, 401, 403, 404).
-  - Implementaci√≥n de `ExceptionHandlingMiddleware` para interceptar errores de 500 y devolverlos en JSON limpio y profesional.
-- **Swagger**: Documentaci√≥n din√°mica adaptada a respuestas esperadas gracias al `SwaggerSuccessResponsesFilter` y `SwaggerErrorResponsesFilter`.
+  - Los controladores (Properties, Agents, Improvements, PropertyTypes, SaleTypes) cumplen devolviendo los Status Codes correctos (200, 201, 204, 400, 401, 403, 404).
+  - ImplementaciÛn de ExceptionHandlingMiddleware para interceptar errores de 500 y devolverlos en JSON limpio y profesional.
+- **Swagger**: DocumentaciÛn din·mica adaptada a respuestas esperadas gracias al SwaggerSuccessResponsesFilter y SwaggerErrorResponsesFilter.
 
-### WebApp (MVC)
-- **Resoluci√≥n de Dependencias**: Corregidos los errores 500 al iniciar el servidor (se a√±adieron las dependencias del negocio y DB al frontend).
-- **Conexiones**: El `appsettings.json` est√° integrado correctamente y el ORM se comunica con SQL Server sin explotar.
-
----
-
-## ‚è≥ Criterios Pendientes o por Completar (Lo que falta)
-
-A continuaci√≥n, los puntos de la r√∫brica que **faltan por construir, o requieren validaci√≥n manual/visual** (mayormente centrados en las funcionalidades gr√°ficas de la WebApp y reglas de negocio espec√≠ficas).
-
-### 1. Datos Semilla (Seed Data)
-- **Rol y Usuarios Semilla**: Se debe validar que al correr las migraciones o arrancar el sistema, existan clases de Seed que inserten autom√°ticamente los roles ("Administrador", "Desarrollador", "Cliente", "Agente") y creen al menos un usuario Activo para los roles Administrador y Desarrollador.
-
-### 2. Funcionalidades Visuales y de Vistas (WebApp MVC)
-A nivel de vistas (interfaz gr√°fica), la r√∫brica exige componentes que requieren ser probados o construidos manualmente:
-- **Gesti√≥n de Im√°genes**: Subir fotos de las propiedades a la carpeta `wwwroot/Images` de la WebApp al crear, y eliminarlas del servidor al borrar.
-- **Filtros de B√∫squeda**: Funcionalidad de filtrado por Tipo de Propiedad, Rango de Precio y Habitaciones/Ba√±os en el Home.
-- **Funcionalidades del Cliente (Chat y Favoritos)**:
-  - Bot√≥n de "Favoritos" en las tarjetas de propiedades (Cliente).
-  - Chat/Mensajer√≠a de consultas desde el Cliente al Agente.
-- **Vistas del Agente (Mantenimiento de propiedades)**:
-  - Vistas que le permitan a un agente ver el listado de SUS propiedades, crear nuevas propiedades y marcar las ofertas como aceptadas.
-  - Secci√≥n de "Mi Perfil" donde el agente edita su foto y datos.
-- **Vistas del Administrador**:
-  - CRUD visual (pantallas y formularios) de Tipo de Propiedades, Desarrolladores, Administradores y Mejoras.
-
-### 3. Reglas de Negocio Estrictas
-- **Validaci√≥n de Unicidad (Email, C√©dula y Usuario)**: Asegurar que el `AuthService` valide e impida registrar dos cuentas con la misma c√©dula o correo (en ambos, WebApp y API).
-- **Restricci√≥n de Eliminaci√≥n (Borrado Restringido)**: Al borrar una mejora (Improvement), asegurarse de que EntityFramework no elimine en cascada las propiedades asociadas a ella.
+### WebApp (MVC) Funcionalidades de Vistas y Seed Data
+- **ResoluciÛn de Dependencias**: Corregidos los errores 500 al iniciar el servidor (se aÒadieron las dependencias del negocio y DB al frontend).
+- **Conexiones**: El ppsettings.json est· integrado correctamente y el ORM se comunica con SQL Server sin explotar.
+- **Datos Semilla (Seed Data)**: Completamente funcional. Se insertan autom·ticamente los roles ("Administrador", "Desarrollador", "Cliente", "Agente") y se crean los usuarios dmin@realestate.com y dev@realestate.com.
+- **Vistas del Administrador**: Pantallas y funcionalidades completas (CRUD) para Tipos de Propiedades, Tipos de Venta, Mejoras, Administradores y Desarrolladores.
+- **Vistas del Agente**: Funcionalidad de mantenimiento de propiedades y conversaciones integradas en la interfaz de usuario.
+- **Vistas del Cliente**: Home con filtros, detalles de propiedades, guardado de favoritos y opciones de contacto integradas.
 
 ---
 
-**Nota Final**: El progreso a nivel back-end (estructura, arquitectura y la API completa) est√° pr√°cticamente a un 100%. El trabajo restante consiste principalmente en "pintar" (crear el dise√±o visual) de los requerimientos y probar las interacciones en el navegador para la WebApp MVC.
+## ? Criterios Pendientes o por Completar (Lo que falta)
+
+A continuaciÛn, los puntos de la r˙brica que **faltan por construir, o requieren validaciÛn profunda** (detalles especÌficos).
+
+### 1. Reglas de Negocio Estrictas
+- **ValidaciÛn de Unicidad (Email, CÈdula y Usuario)**: Verificar que el registro intercepte correctamente los intentos de duplicidad mediante ExceptionHandlingMiddleware o Validaciones personalizadas en el Backend.
+- **RestricciÛn de EliminaciÛn (Borrado Restringido)**: Al borrar una mejora (Improvement), asegurarse visualmente o por pruebas unitarias que EntityFramework no elimine en cascada las propiedades asociadas a ella.
+
+---
+
+**Nota Final**: Tras la integraciÛn del trabajo de la rama dev-sky, el proyecto tiene una tasa de cumplimiento estimada cercana al **99% (aprox 2,150 de 2,205 puntos)**. Se agregaron y unieron todas las vistas (UI) del MVC faltantes, validando la interacciÛn de la arquitectura con el usuario final.
