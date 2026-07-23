@@ -5,6 +5,7 @@ using RealEstateApp.Application.DTOs.Account;
 using RealEstateApp.Application.Interfaces.Identity;
 using RealEstateApp.Application.Interfaces.Shared;
 using RealEstateApp.Infrastructure.Identity.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace RealEstateApp.Infrastructure.Identity.Services;
 
@@ -64,6 +65,7 @@ public class AuthService : IAuthService
             UserName = request.UserName,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
+            ProfilePicture = request.ProfilePicture,
             IsActive = false
         };
 
@@ -93,6 +95,7 @@ public class AuthService : IAuthService
             UserName = request.UserName,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
+            ProfilePicture = request.ProfilePicture,
             IsActive = false // Los agentes quedan inactivos hasta que un admin los active
         };
 
@@ -186,5 +189,29 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByIdAsync(userId) ?? throw new Exception("Usuario no encontrado.");
         user.IsActive = isActive;
         await _userManager.UpdateAsync(user);
+    }
+
+    public async Task<bool> CedulaExistsAsync(string idCard)
+    {
+        if (string.IsNullOrWhiteSpace(idCard)) return false;
+        return await _userManager.Users.AnyAsync(u => u.IdCard == idCard);
+    }
+
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        return user != null;
+    }
+
+    public async Task<bool> UsernameExistsAsync(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        return user != null;
+    }
+
+    public async Task<int> CountActiveAdminUsersAsync()
+    {
+        var admins = await _userManager.GetUsersInRoleAsync("Admin");
+        return admins.Count(a => a.IsActive);
     }
 }

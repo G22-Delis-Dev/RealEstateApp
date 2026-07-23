@@ -8,4 +8,7 @@ public interface IAccountService
     Task<string> RegisterClientAsync(RegisterDeveloperRequestDto request, string origin);
     Task<string> RegisterAgentAsync(RegisterDeveloperRequestDto request);
     Task<string> ConfirmEmailAsync(string userId, string token);
+    Task<string> CreateAdministratorAsync(RegisterAdministratorRequestDto request, string currentAdminId);
+    Task DeactivateAdministratorAsync(string adminIdToDeactivate, string currentAdminId);
+    Task<string> CreateDeveloperAsync(RegisterDeveloperRequestDto request, string origin);
 }

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using RealEstateApp.Application.Common.Exceptions;
+using RealEstateApp.Domain.Exceptions;
 
 namespace RealEstateApp.API.Middlewares;
 
@@ -44,6 +45,12 @@ public class ExceptionHandlingMiddleware
                 response.StatusCode = 400;
                 response.Message = validationEx.Message;
                 response.Errors = validationEx.Errors;
+                break;
+
+            case BusinessRuleValidationException businessRuleEx:
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest; // 400
+                response.StatusCode = 400;
+                response.Message = businessRuleEx.Message;
                 break;
 
             case ForbiddenAccessException forbiddenEx:

@@ -1,0 +1,54 @@
+@{
+    ViewData["Title"] = "Dashboard Administrador";
+}
+
+<div class="container mt-4">
+    <h2>Dashboard Administrativo</h2>
+    <hr />
+
+    <div class="row">
+        <!-- Properties -->
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Propiedades</h5>
+                    <h3>@ViewBag.TotalProperties</h3>
+                    <p class="card-text">Total registradas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agents -->
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Agentes</h5>
+                    <h3>@(ViewBag.ActiveAgents + ViewBag.InactiveAgents)</h3>
+                    <p class="card-text">@ViewBag.ActiveAgents Activos / @ViewBag.InactiveAgents Inactivos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients -->
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Clientes</h5>
+                    <h3>@(ViewBag.ActiveClients + ViewBag.InactiveClients)</h3>
+                    <p class="card-text">@ViewBag.ActiveClients Activos / @ViewBag.InactiveClients Inactivos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developers -->
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Desarrolladores</h5>
+                    <h3>@(ViewBag.ActiveDevelopers + ViewBag.InactiveDevelopers)</h3>
+                    <p class="card-text">@ViewBag.ActiveDevelopers Activos / @ViewBag.InactiveDevelopers Inactivos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

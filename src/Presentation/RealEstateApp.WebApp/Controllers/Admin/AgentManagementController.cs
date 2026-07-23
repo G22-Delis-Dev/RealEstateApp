@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Interfaces.Services;
 
 namespace RealEstateApp.WebApp.Controllers.Admin;
 
-[Authorize(Roles = "Administrador")]
+[Authorize(Roles = "Admin")]
 [Route("Admin/Agents")]
 public class AgentManagementController : BaseController
 {

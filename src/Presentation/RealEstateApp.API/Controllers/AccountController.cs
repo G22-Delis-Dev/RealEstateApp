@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Account;
 using RealEstateApp.Application.Interfaces.Identity;
@@ -40,20 +41,31 @@ public class AccountController : ControllerBase
         return Ok(new { message = response });
     }
 
-    [HttpPost("register-admin")]
+    [Authorize(Roles = "Admin")]
+    [HttpPost("create-admin")]
     public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdministratorRequestDto request)
     {
-        var origin = Request.Headers["origin"].ToString();
-        var response = await _authService.RegisterAdministratorAsync(request, origin);
+        var currentAdminId = User.FindFirst("uid")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        var response = await _accountService.CreateAdministratorAsync(request, currentAdminId);
         return Ok(new { message = response });
     }
 
-    [HttpPost("register-developer")]
+    [Authorize(Roles = "Admin")]
+    [HttpPost("create-developer")]
     public async Task<IActionResult> RegisterDeveloper([FromBody] RegisterDeveloperRequestDto request)
     {
         var origin = Request.Headers["origin"].ToString();
-        var response = await _authService.RegisterDeveloperAsync(request, origin);
+        var response = await _accountService.CreateDeveloperAsync(request, origin);
         return Ok(new { message = response });
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPut("deactivate-admin/{id}")]
+    public async Task<IActionResult> DeactivateAdmin(string id)
+    {
+        var currentAdminId = User.FindFirst("uid")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        await _accountService.DeactivateAdministratorAsync(id, currentAdminId);
+        return NoContent();
     }
 
     [HttpGet("confirm-email")]

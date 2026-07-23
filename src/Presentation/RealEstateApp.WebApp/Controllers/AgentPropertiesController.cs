@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.ViewModels.Properties;
@@ -6,7 +6,7 @@ using RealEstateApp.Domain.Exceptions;
 
 namespace RealEstateApp.WebApp.Controllers;
 
-[Authorize(Roles = "Agente")]
+[Authorize(Roles = "Agent")]
 public class AgentPropertiesController : BaseController
 {
     private readonly IPropertyService _propertyService;

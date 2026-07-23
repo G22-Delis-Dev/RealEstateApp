@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.ViewModels.Catalogs;
@@ -6,7 +6,7 @@ using RealEstateApp.Domain.Exceptions;
 
 namespace RealEstateApp.WebApp.Controllers.Admin;
 
-[Authorize(Roles = "Administrador")]
+[Authorize(Roles = "Admin")]
 [Route("Admin/PropertyTypes")]
 public class PropertyTypesController : BaseController
 {

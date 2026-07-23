@@ -2,6 +2,8 @@ using RealEstateApp.Application.Common.Exceptions;
 using RealEstateApp.Application.DTOs.Account;
 using RealEstateApp.Application.Interfaces.Identity;
 using RealEstateApp.Application.Interfaces.Services;
+using RealEstateApp.Domain.Rules;
+using RealEstateApp.Domain.Rules.Account;
 
 namespace RealEstateApp.Application.Services;
 
@@ -39,6 +41,44 @@ public class AccountService : IAccountService
     public async Task<string> ConfirmEmailAsync(string userId, string token)
     {
         return await _authService.ConfirmEmailAsync(userId, token);
+    }
+
+    public async Task<string> CreateAdministratorAsync(RegisterAdministratorRequestDto request, string currentAdminId)
+    {
+        BusinessRuleValidator.CheckRules(
+            new PasswordsMustMatchRule(request.Password, request.ConfirmPassword),
+            new EmailMustBeUniqueRule(await _authService.EmailExistsAsync(request.Email)),
+            new UsernameMustBeUniqueRule(await _authService.UsernameExistsAsync(request.UserName)),
+            new CedulaMustBeUniqueRule(await _authService.CedulaExistsAsync(request.IdCard))
+        );
+
+        return await _authService.RegisterAdministratorAsync(request, string.Empty);
+    }
+
+    public async Task DeactivateAdministratorAsync(string adminIdToDeactivate, string currentAdminId)
+    {
+        BusinessRuleValidator.CheckRules(
+            new AdminCannotSelfModifyRule(currentAdminId, adminIdToDeactivate),
+            new LastActiveAdminCannotBeDeactivatedRule(await _authService.CountActiveAdminUsersAsync(), true)
+        );
+
+        await _authService.SetUserStatusAsync(adminIdToDeactivate, false);
+    }
+
+    public async Task<string> CreateDeveloperAsync(RegisterDeveloperRequestDto request, string origin)
+    {
+        BusinessRuleValidator.CheckRules(
+            new PasswordsMustMatchRule(request.Password, request.ConfirmPassword),
+            new EmailMustBeUniqueRule(await _authService.EmailExistsAsync(request.Email)),
+            new UsernameMustBeUniqueRule(await _authService.UsernameExistsAsync(request.UserName))
+        );
+
+        if (!string.IsNullOrWhiteSpace(request.IdCard))
+        {
+            BusinessRuleValidator.CheckRule(new CedulaMustBeUniqueRule(await _authService.CedulaExistsAsync(request.IdCard)));
+        }
+
+        return await _authService.RegisterDeveloperAsync(request, origin);
     }
 
     /// <summary>
