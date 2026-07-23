@@ -9,6 +9,7 @@ public interface IPropertyService : IGenericService<PropertyViewModel>
     Task<IEnumerable<PropertyViewModel>> GetAvailableAsync();
     Task<IEnumerable<PropertyViewModel>> FilterAsync(PropertyFilterViewModel filter);
     Task<IEnumerable<PropertyViewModel>> GetByAgentIdAsync(string agentId);
+    Task<IEnumerable<PropertyViewModel>> GetByAgentIdIncludingSoldAsync(string agentId);
 
     Task<PropertyViewModel> CreateAsync(CreatePropertyViewModel model, string agentId);
     Task UpdateAsync(int id, EditPropertyViewModel model, string agentId);

@@ -1,0 +1,36 @@
+@model RealEstateApp.Application.ViewModels.Agents.AgentViewModel
+@{
+    ViewData["Title"] = "Eliminar agente";
+}
+
+<div class="container mt-4">
+    <h4 class="text-danger">Eliminar agente</h4>
+    <hr />
+
+    <div class="alert alert-warning">
+        <strong>¿Está seguro de que desea eliminar este agente?</strong>
+        <p class="mb-0 mt-2">Esta acción eliminará permanentemente:</p>
+        <ul class="mb-0">
+            <li>El agente <strong>@Model.FirstName @Model.LastName</strong></li>
+            <li>Todas sus propiedades (@Model.PropertyCount)</li>
+            <li>Todas las conversaciones, ofertas y favoritos asociados</li>
+        </ul>
+        <p class="mb-0 mt-2 text-danger"><strong>Esta acción NO se puede deshacer.</strong></p>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6>Información del agente</h6>
+            <p><strong>Nombre:</strong> @Model.FirstName @Model.LastName</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Teléfono:</strong> @Model.Phone</p>
+            <p><strong>Propiedades:</strong> @Model.PropertyCount</p>
+        </div>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

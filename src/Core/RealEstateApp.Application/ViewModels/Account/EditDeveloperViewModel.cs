@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
 
 namespace RealEstateApp.Application.ViewModels.Account;
 
-public class RegisterViewModel
+public class EditDeveloperViewModel
 {
+    public string Id { get; set; } = null!;
+
     [Required(ErrorMessage = "El nombre es requerido.")]
     [DataType(DataType.Text)]
     public string FirstName { get; set; } = null!;
@@ -22,23 +23,18 @@ public class RegisterViewModel
     [DataType(DataType.EmailAddress)]
     public string Email { get; set; } = null!;
 
-    [Required(ErrorMessage = "La contraseña es requerida.")]
-    [DataType(DataType.Password)]
-    public string Password { get; set; } = null!;
-
-    [Required(ErrorMessage = "Confirmar contraseña es requerido.")]
-    [Compare(nameof(Password), ErrorMessage = "Las contraseñas no coinciden.")]
-    [DataType(DataType.Password)]
-    public string ConfirmPassword { get; set; } = null!;
-
     [Required(ErrorMessage = "El teléfono es requerido.")]
     [DataType(DataType.PhoneNumber)]
     public string Phone { get; set; } = null!;
 
-    [Required(ErrorMessage = "El tipo de usuario es requerido.")]
-    public string UserType { get; set; } = null!;
+    [Required(ErrorMessage = "La cédula es requerida.")]
+    [DataType(DataType.Text)]
+    public string IdCard { get; set; } = null!;
 
-    [Required(ErrorMessage = "La foto de perfil es requerida.")]
-    [DataType(DataType.Upload)]
-    public IFormFile? ProfilePhoto { get; set; }
+    [DataType(DataType.Password)]
+    public string? NewPassword { get; set; }
+
+    [Compare(nameof(NewPassword), ErrorMessage = "Las contraseñas no coinciden.")]
+    [DataType(DataType.Password)]
+    public string? ConfirmNewPassword { get; set; }
 }

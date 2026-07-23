@@ -21,25 +21,24 @@ public class AdminHomeController : BaseController
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        // Get all users by role
         var agents = await _authService.GetUsersByRoleAsync("Agent");
         var clients = await _authService.GetUsersByRoleAsync("Client");
         var developers = await _authService.GetUsersByRoleAsync("Developer");
 
-        // Property count
-        // Note: For a production app with many properties, a dedicated CountAsync method would be better.
         var properties = await _propertyService.GetAllAsync();
-        var totalProperties = properties.Count();
+        var propList = properties.ToList();
 
-        ViewBag.TotalProperties = totalProperties;
-        
-        ViewBag.ActiveAgents = agents.Count(a => a.IsActive);
-        ViewBag.InactiveAgents = agents.Count(a => !a.IsActive);
-        
-        ViewBag.ActiveClients = clients.Count(c => c.IsActive);
+        ViewBag.AvailableProperties = propList.Count(p => p.Status == "Disponible");
+        ViewBag.SoldProperties      = propList.Count(p => p.Status == "Vendida");
+        ViewBag.TotalProperties     = propList.Count;
+
+        ViewBag.ActiveAgents    = agents.Count(a => a.IsActive);
+        ViewBag.InactiveAgents  = agents.Count(a => !a.IsActive);
+
+        ViewBag.ActiveClients   = clients.Count(c => c.IsActive);
         ViewBag.InactiveClients = clients.Count(c => !c.IsActive);
-        
-        ViewBag.ActiveDevelopers = developers.Count(d => d.IsActive);
+
+        ViewBag.ActiveDevelopers   = developers.Count(d => d.IsActive);
         ViewBag.InactiveDevelopers = developers.Count(d => !d.IsActive);
 
         return View();

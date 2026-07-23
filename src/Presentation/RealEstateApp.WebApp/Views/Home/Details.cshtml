@@ -44,8 +44,36 @@
 
         <div class="col-md-4">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body text-center">
                     <h6>Agente responsable</h6>
+                    
+                    @if (!string.IsNullOrWhiteSpace(Model.AgentPhotoUrl))
+                    {
+                        <img src="@Model.AgentPhotoUrl" alt="@Model.AgentName" class="rounded-circle mb-2" style="width:80px; height:80px; object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mb-2 mx-auto" style="width:80px; height:80px; font-size:1.5rem;">
+                            @if (!string.IsNullOrWhiteSpace(Model.AgentName))
+                            {
+                                var names = Model.AgentName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                if (names.Length >= 2)
+                                {
+                                    @names[0][0]@names[1][0]
+                                }
+                                else
+                                {
+                                    @names[0][0]
+                                }
+                            }
+                        </div>
+                    }
+                    
+                    <p class="mb-1"><strong>@Model.AgentName</strong></p>
+                    <p class="text-muted small mb-1">@Model.AgentEmail</p>
+                    <p class="text-muted small">@Model.AgentPhone</p>
+                    
+                    <hr />
                     <p class="text-muted small">Contacte al agente iniciando sesión como Cliente.</p>
                     <a asp-controller="Account" asp-action="Login" class="btn btn-primary w-100">Iniciar sesión para contactar</a>
                 </div>

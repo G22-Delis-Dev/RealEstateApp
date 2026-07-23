@@ -6,6 +6,7 @@ using RealEstateApp.Application.Interfaces.Identity;
 using RealEstateApp.Application.Interfaces.Shared;
 using RealEstateApp.Infrastructure.Identity.Entities;
 using Microsoft.EntityFrameworkCore;
+using RealEstateApp.Application.Common.Exceptions;
 
 namespace RealEstateApp.Infrastructure.Identity.Services;
 
@@ -66,13 +67,13 @@ public class AuthService : IAuthService
     public async Task<string> RegisterDeveloperAsync(RegisterDeveloperRequestDto request, string origin)
     {
         if (await EmailExistsAsync(request.Email))
-            throw new Exception($"El correo {request.Email} ya está registrado.");
+            throw new ConflictException($"El correo {request.Email} ya está registrado.");
 
         if (await UsernameExistsAsync(request.UserName))
-            throw new Exception($"El nombre de usuario {request.UserName} ya está en uso.");
+            throw new ConflictException($"El nombre de usuario {request.UserName} ya está en uso.");
 
         if (!string.IsNullOrWhiteSpace(request.IdCard) && await CedulaExistsAsync(request.IdCard))
-            throw new Exception($"La cédula {request.IdCard} ya está registrada.");
+            throw new ConflictException($"La cédula {request.IdCard} ya está registrada.");
 
         var user = new ApplicationUser
         {
@@ -105,13 +106,13 @@ public class AuthService : IAuthService
     public async Task<string> RegisterAgentAsync(RegisterDeveloperRequestDto request)
     {
         if (await EmailExistsAsync(request.Email))
-            throw new Exception($"El correo {request.Email} ya está registrado.");
+            throw new ConflictException($"El correo {request.Email} ya está registrado.");
 
         if (await UsernameExistsAsync(request.UserName))
-            throw new Exception($"El nombre de usuario {request.UserName} ya está en uso.");
+            throw new ConflictException($"El nombre de usuario {request.UserName} ya está en uso.");
 
         if (!string.IsNullOrWhiteSpace(request.IdCard) && await CedulaExistsAsync(request.IdCard))
-            throw new Exception($"La cédula {request.IdCard} ya está registrada.");
+            throw new ConflictException($"La cédula {request.IdCard} ya está registrada.");
 
         var user = new ApplicationUser
         {
@@ -138,13 +139,13 @@ public class AuthService : IAuthService
     public async Task<string> RegisterAdministratorAsync(RegisterAdministratorRequestDto request, string origin)
     {
         if (await EmailExistsAsync(request.Email))
-            throw new Exception($"El correo {request.Email} ya está registrado.");
+            throw new ConflictException($"El correo {request.Email} ya está registrado.");
 
         if (await UsernameExistsAsync(request.UserName))
-            throw new Exception($"El nombre de usuario {request.UserName} ya está en uso.");
+            throw new ConflictException($"El nombre de usuario {request.UserName} ya está en uso.");
 
         if (!string.IsNullOrWhiteSpace(request.IdCard) && await CedulaExistsAsync(request.IdCard))
-            throw new Exception($"La cédula {request.IdCard} ya está registrada.");
+            throw new ConflictException($"La cédula {request.IdCard} ya está registrada.");
 
         var user = new ApplicationUser
         {
@@ -193,9 +194,11 @@ public class AuthService : IAuthService
             Id = u.Id,
             FirstName = u.FirstName,
             LastName = u.LastName,
+            UserName = u.UserName!,
             Email = u.Email!,
+            IdCard = u.IdCard,
             PhoneNumber = u.PhoneNumber,
-            PhotoUrl = null,
+            PhotoUrl = u.ProfilePicture,
             IsActive = u.IsActive
         });
     }
@@ -211,9 +214,11 @@ public class AuthService : IAuthService
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
+            UserName = user.UserName!,
             Email = user.Email!,
+            IdCard = user.IdCard,
             PhoneNumber = user.PhoneNumber,
-            PhotoUrl = null,
+            PhotoUrl = user.ProfilePicture,
             IsActive = user.IsActive
         };
     }
@@ -247,5 +252,78 @@ public class AuthService : IAuthService
     {
         var admins = await _userManager.GetUsersInRoleAsync("Admin");
         return admins.Count(a => a.IsActive);
+    }
+
+    public async Task DeleteUserAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId)
+            ?? throw new Exception("Usuario no encontrado.");
+        await _userManager.DeleteAsync(user);
+    }
+
+    public async Task UpdateUserAsync(string userId, string firstName, string lastName, string phoneNumber, string? newPassword, string? profilePicture)
+    {
+        var user = await _userManager.FindByIdAsync(userId)
+            ?? throw new Exception("Usuario no encontrado.");
+
+        user.FirstName = firstName;
+        user.LastName = lastName;
+        user.PhoneNumber = phoneNumber;
+
+        if (!string.IsNullOrWhiteSpace(profilePicture))
+            user.ProfilePicture = profilePicture;
+
+        await _userManager.UpdateAsync(user);
+
+        if (!string.IsNullOrWhiteSpace(newPassword))
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            await _userManager.ResetPasswordAsync(user, token, newPassword);
+        }
+    }
+
+    public async Task UpdateDeveloperOrAdminAsync(string userId, string userName, string email, string firstName, string lastName, string phoneNumber, string idCard, string? newPassword)
+    {
+        var user = await _userManager.FindByIdAsync(userId)
+            ?? throw new Exception("Usuario no encontrado.");
+
+        // Validar que username no esté en uso por otro usuario
+        if (user.UserName != userName)
+        {
+            var existingByUsername = await _userManager.FindByNameAsync(userName);
+            if (existingByUsername != null && existingByUsername.Id != userId)
+                throw new Exception("El nombre de usuario ya está en uso.");
+        }
+
+        // Validar que email no esté en uso por otro usuario
+        if (user.Email != email)
+        {
+            var existingByEmail = await _userManager.FindByEmailAsync(email);
+            if (existingByEmail != null && existingByEmail.Id != userId)
+                throw new Exception("El correo electrónico ya está en uso.");
+        }
+
+        // Validar que IdCard no esté en uso por otro usuario
+        if (user.IdCard != idCard)
+        {
+            var existingByIdCard = await _userManager.Users.FirstOrDefaultAsync(u => u.IdCard == idCard);
+            if (existingByIdCard != null && existingByIdCard.Id != userId)
+                throw new Exception("La cédula ya está en uso.");
+        }
+
+        user.UserName = userName;
+        user.Email = email;
+        user.FirstName = firstName;
+        user.LastName = lastName;
+        user.PhoneNumber = phoneNumber;
+        user.IdCard = idCard;
+
+        await _userManager.UpdateAsync(user);
+
+        if (!string.IsNullOrWhiteSpace(newPassword))
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            await _userManager.ResetPasswordAsync(user, token, newPassword);
+        }
     }
 }

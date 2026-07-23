@@ -19,6 +19,16 @@
         {
             <div class="col text-center">
                 <div class="card h-100 p-3">
+                    @if (!string.IsNullOrWhiteSpace(agent.PhotoUrl))
+                    {
+                        <img src="@agent.PhotoUrl" alt="@agent.FirstName @agent.LastName" class="rounded-circle mb-2" style="width:80px; height:80px; object-fit:cover; margin:0 auto;" />
+                    }
+                    else
+                    {
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mb-2" style="width:80px; height:80px; margin:0 auto; font-size:1.5rem;">
+                            @agent.FirstName[0]@agent.LastName[0]
+                        </div>
+                    }
                     <h6>@agent.FirstName @agent.LastName</h6>
                     <p class="text-muted small">@agent.PropertyCount propiedades</p>
                     <a asp-action="Properties" asp-route-agentId="@agent.Id" class="btn btn-outline-primary btn-sm">Ver propiedades</a>

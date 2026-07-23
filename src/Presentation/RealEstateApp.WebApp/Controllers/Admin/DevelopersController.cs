@@ -90,4 +90,63 @@ public class DevelopersController : BaseController
             return RedirectToAction(nameof(Index));
         }
     }
+
+    [HttpGet("Edit/{id}")]
+    public async Task<IActionResult> Edit(string id)
+    {
+        try
+        {
+            var dev = await _authService.GetUserByIdInRoleAsync(id, "Developer");
+            if (dev is null)
+            {
+                TempData["ErrorMessage"] = "Desarrollador no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var model = new EditDeveloperViewModel
+            {
+                Id = dev.Id,
+                FirstName = dev.FirstName,
+                LastName = dev.LastName,
+                UserName = dev.UserName,
+                Email = dev.Email,
+                Phone = dev.PhoneNumber ?? "",
+                IdCard = dev.IdCard ?? ""
+            };
+
+            return View(model);
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    [HttpPost("Edit/{id}")]
+    public async Task<IActionResult> Edit(EditDeveloperViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        try
+        {
+            await _authService.UpdateDeveloperOrAdminAsync(
+                model.Id,
+                model.UserName,
+                model.Email,
+                model.FirstName,
+                model.LastName,
+                model.Phone,
+                model.IdCard,
+                model.NewPassword
+            );
+
+            return RedirectWithSuccess(nameof(Index), "Desarrollador actualizado correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(model);
+        }
+    }
 }

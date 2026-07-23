@@ -48,32 +48,47 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
     public override async Task<PropertyViewModel?> GetByIdAsync(int id)
     {
         var property = await _propertyRepository.GetByIdAsync(id);
-        return property is null ? null : _mapper.Map<PropertyViewModel>(property);
+        if (property is null) return null;
+        var vm = _mapper.Map<PropertyViewModel>(property);
+        await PopulateAgentInfoAsync(vm);
+        return vm;
     }
 
     public async Task<PropertyViewModel?> GetByCodeAsync(string code)
     {
         var property = await _propertyRepository.GetByCodeAsync(code);
-        return property is null ? null : _mapper.Map<PropertyViewModel>(property);
+        if (property is null) return null;
+        var vm = _mapper.Map<PropertyViewModel>(property);
+        await PopulateAgentInfoAsync(vm);
+        return vm;
     }
 
     public async Task<IEnumerable<PropertyViewModel>> GetAvailableAsync()
     {
         var properties = await _propertyRepository.GetAvailableAsync();
-        return _mapper.Map<IEnumerable<PropertyViewModel>>(properties);
+        var vms = _mapper.Map<List<PropertyViewModel>>(properties);
+        await PopulateAgentInfoBatchAsync(vms);
+        return vms;
     }
 
     public async Task<IEnumerable<PropertyViewModel>> FilterAsync(PropertyFilterViewModel filter)
     {
         var properties = await _propertyRepository.FilterAsync(
             filter.PropertyTypeId, filter.MinPrice, filter.MaxPrice, filter.Rooms, filter.Bathrooms);
-
-        return _mapper.Map<IEnumerable<PropertyViewModel>>(properties);
+        var vms = _mapper.Map<List<PropertyViewModel>>(properties);
+        await PopulateAgentInfoBatchAsync(vms);
+        return vms;
     }
 
     public async Task<IEnumerable<PropertyViewModel>> GetByAgentIdAsync(string agentId)
     {
         var properties = await _propertyRepository.GetByAgentIdAsync(agentId);
+        return _mapper.Map<IEnumerable<PropertyViewModel>>(properties);
+    }
+
+    public async Task<IEnumerable<PropertyViewModel>> GetByAgentIdIncludingSoldAsync(string agentId)
+    {
+        var properties = await _propertyAdminRepository.GetByAgentIdIncludingSoldAsync(agentId);
         return _mapper.Map<IEnumerable<PropertyViewModel>>(properties);
     }
 
@@ -164,22 +179,53 @@ public class PropertyService : GenericService<PropertyViewModel, Domain.Entities
 
     // ===== Helpers privados para completar AgentName (Domain no conoce Identity) =====
 
+    private async Task PopulateAgentInfoAsync(PropertyViewModel vm)
+    {
+        var agent = await _authService.GetUserByIdInRoleAsync(vm.AgentId, "Agent");
+        if (agent is not null)
+        {
+            vm.AgentName = $"{agent.FirstName} {agent.LastName}";
+            vm.AgentEmail = agent.Email;
+            vm.AgentPhone = agent.PhoneNumber;
+            vm.AgentPhotoUrl = agent.PhotoUrl;
+        }
+    }
+
+    private async Task PopulateAgentInfoBatchAsync(List<PropertyViewModel> vms)
+    {
+        var agentCache = new Dictionary<string, UserSummary?>();
+        foreach (var vm in vms)
+        {
+            if (!agentCache.TryGetValue(vm.AgentId, out var agent))
+            {
+                agent = await _authService.GetUserByIdInRoleAsync(vm.AgentId, "Agent");
+                agentCache[vm.AgentId] = agent;
+            }
+            if (agent is not null)
+            {
+                vm.AgentName = $"{agent.FirstName} {agent.LastName}";
+                vm.AgentEmail = agent.Email;
+                vm.AgentPhone = agent.PhoneNumber;
+                vm.AgentPhotoUrl = agent.PhotoUrl;
+            }
+        }
+    }
+
     private async Task PopulateAgentNameAsync(PropertyDto dto)
     {
-        var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
+        var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agent");
         dto.AgentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
     }
 
     private async Task PopulateAgentNamesAsync(List<PropertyDto> dtos)
     {
-        // Evita N llamadas repetidas si varias propiedades comparten el mismo agente
         var agentCache = new Dictionary<string, string>();
 
         foreach (var dto in dtos)
         {
             if (!agentCache.TryGetValue(dto.AgentId, out var agentName))
             {
-                var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agente");
+                var agent = await _authService.GetUserByIdInRoleAsync(dto.AgentId, "Agent");
                 agentName = agent is not null ? $"{agent.FirstName} {agent.LastName}" : string.Empty;
                 agentCache[dto.AgentId] = agentName;
             }

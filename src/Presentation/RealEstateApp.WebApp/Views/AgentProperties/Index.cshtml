@@ -24,7 +24,7 @@
 
     <table class="table table-striped">
         <thead>
-            <tr><th>Código</th><th>Tipo</th><th>Venta</th><th>Precio</th><th>Hab.</th><th>Baños</th><th>Acciones</th></tr>
+            <tr><th>Código</th><th>Tipo</th><th>Venta</th><th>Precio</th><th>Hab.</th><th>Baños</th><th>Estado</th><th>Acciones</th></tr>
         </thead>
         <tbody>
             @foreach (var p in Model)
@@ -36,6 +36,16 @@
                     <td>RD$ @p.Price.ToString("N2")</td>
                     <td>@p.Rooms</td>
                     <td>@p.Bathrooms</td>
+                    <td>
+                        @if (p.IsSold)
+                        {
+                            <span class="badge bg-success">VENDIDA</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-primary">Disponible</span>
+                        }
+                    </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
                         <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-outline-danger">Eliminar</a>

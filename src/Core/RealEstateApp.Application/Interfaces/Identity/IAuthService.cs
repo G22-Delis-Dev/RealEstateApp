@@ -17,6 +17,9 @@ public interface IAuthService
     Task<bool> EmailExistsAsync(string email);
     Task<bool> UsernameExistsAsync(string username);
     Task<int> CountActiveAdminUsersAsync();
+    Task DeleteUserAsync(string userId);
+    Task UpdateUserAsync(string userId, string firstName, string lastName, string phoneNumber, string? newPassword, string? profilePicture);
+    Task UpdateDeveloperOrAdminAsync(string userId, string userName, string email, string firstName, string lastName, string phoneNumber, string idCard, string? newPassword);
 }
 
 public class UserSummary
@@ -24,7 +27,9 @@ public class UserSummary
     public string Id { get; set; } = null!;
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
+    public string UserName { get; set; } = null!;
     public string Email { get; set; } = null!;
+    public string? IdCard { get; set; }
     public string? PhoneNumber { get; set; }
     public string? PhotoUrl { get; set; }
     public bool IsActive { get; set; }

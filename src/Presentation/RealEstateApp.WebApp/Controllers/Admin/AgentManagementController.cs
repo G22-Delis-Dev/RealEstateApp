@@ -29,4 +29,31 @@ public class AgentManagementController : BaseController
         var message = activate ? "El agente fue activado correctamente." : "El agente fue inactivado correctamente.";
         return RedirectWithSuccess(nameof(Index), message);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var agent = await _agentService.GetByIdAsync(id);
+        if (agent is null)
+        {
+            TempData["ErrorMessage"] = "El agente solicitado no existe.";
+            return RedirectToAction(nameof(Index));
+        }
+        return View(agent);
+    }
+
+    [HttpPost, ActionName("Delete")]
+    public async Task<IActionResult> DeleteConfirmed(string id)
+    {
+        try
+        {
+            await _agentService.DeleteAgentAsync(id);
+            return RedirectWithSuccess(nameof(Index), "El agente y sus propiedades asociadas fueron eliminados correctamente.");
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return RedirectToAction(nameof(Index));
+        }
+    }
 }

@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "Acceso denegado";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card shadow-sm border-danger">
+                <div class="card-body p-5">
+                    <h1 class="display-4 text-danger">403</h1>
+                    <h3 class="mb-3">Acceso denegado</h3>
+                    <p class="text-muted mb-4">No tienes permisos para acceder a esta sección.</p>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="AdminHome" asp-action="Index" class="btn btn-primary">
+                            Ir al Home del Administrador
+                        </a>
+                    }
+                    else if (User.IsInRole("Agent"))
+                    {
+                        <a asp-controller="AgentProperties" asp-action="Index" class="btn btn-primary">
+                            Ir al Home del Agente
+                        </a>
+                    }
+                    else if (User.IsInRole("Client"))
+                    {
+                        <a asp-controller="Client" asp-action="Index" class="btn btn-primary">
+                            Ir al Home del Cliente
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                            Ir al Home
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

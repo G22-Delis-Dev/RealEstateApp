@@ -35,10 +35,10 @@ public class AgentPropertiesController : BaseController
     // GET: /AgentProperties
     public async Task<IActionResult> Index()
     {
-        var properties = await _propertyService.GetByAgentIdAsync(CurrentUserId);
+        var properties = await _propertyService.GetByAgentIdIncludingSoldAsync(CurrentUserId);
 
         if (!properties.Any())
-            TempData["InfoMessage"] = "No tiene propiedades disponibles registradas en este momento.";
+            TempData["InfoMessage"] = "No tiene propiedades registradas en este momento.";
 
         return View(properties);
     }

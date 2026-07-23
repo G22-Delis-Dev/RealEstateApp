@@ -99,4 +99,63 @@ public class AdministratorsController : BaseController
             return RedirectToAction(nameof(Index));
         }
     }
+
+    [HttpGet("Edit/{id}")]
+    public async Task<IActionResult> Edit(string id)
+    {
+        try
+        {
+            var admin = await _authService.GetUserByIdInRoleAsync(id, "Admin");
+            if (admin is null)
+            {
+                TempData["ErrorMessage"] = "Administrador no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var model = new EditAdministratorViewModel
+            {
+                Id = admin.Id,
+                FirstName = admin.FirstName,
+                LastName = admin.LastName,
+                UserName = admin.UserName,
+                Email = admin.Email,
+                Phone = admin.PhoneNumber ?? "",
+                IdCard = admin.IdCard ?? ""
+            };
+
+            return View(model);
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    [HttpPost("Edit/{id}")]
+    public async Task<IActionResult> Edit(EditAdministratorViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        try
+        {
+            await _authService.UpdateDeveloperOrAdminAsync(
+                model.Id,
+                model.UserName,
+                model.Email,
+                model.FirstName,
+                model.LastName,
+                model.Phone,
+                model.IdCard,
+                model.NewPassword
+            );
+
+            return RedirectWithSuccess(nameof(Index), "Administrador actualizado correctamente.");
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(model);
+        }
+    }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Account;
+using RealEstateApp.Application.Interfaces.Identity;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.Interfaces.Shared;
 using RealEstateApp.Application.ViewModels.Account;
@@ -12,11 +13,13 @@ public class AccountController : BaseController
 {
     private readonly IAccountService _accountService;
     private readonly IFileStorageService _fileStorageService;
+    private readonly IAuthService _authService;
 
-    public AccountController(IAccountService accountService, IFileStorageService fileStorageService)
+    public AccountController(IAccountService accountService, IFileStorageService fileStorageService, IAuthService authService)
     {
         _accountService = accountService;
         _fileStorageService = fileStorageService;
+        _authService = authService;
     }
 
     [HttpGet]
@@ -150,6 +153,68 @@ public class AccountController : BaseController
     {
         await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
         return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Mi Perfil (solo Agente)
+    // ─────────────────────────────────────────────────────────────
+
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Agent")]
+    [HttpGet]
+    public async Task<IActionResult> MyProfile()
+    {
+        var user = await _authService.GetUserByIdInRoleAsync(CurrentUserId, "Agent");
+        if (user is null) return RedirectToAction("Index", "AgentProperties");
+
+        var model = new RealEstateApp.Application.ViewModels.Account.AgentProfileViewModel
+        {
+            Id           = user.Id,
+            FirstName    = user.FirstName,
+            LastName     = user.LastName,
+            Phone        = user.PhoneNumber ?? string.Empty,
+            CurrentPhotoUrl = user.PhotoUrl
+        };
+        return View(model);
+    }
+
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Agent")]
+    [HttpPost]
+    public async Task<IActionResult> MyProfile(RealEstateApp.Application.ViewModels.Account.AgentProfileViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        try
+        {
+            string? newPhotoUrl = null;
+            if (model.NewPhoto != null)
+            {
+                using var stream = model.NewPhoto.OpenReadStream();
+                var fileName = $"{Guid.NewGuid()}_{model.NewPhoto.FileName}";
+                newPhotoUrl = await _fileStorageService.UploadFileAsync(stream, fileName, "Users");
+            }
+
+            await _authService.UpdateUserAsync(
+                CurrentUserId,
+                model.FirstName,
+                model.LastName,
+                model.Phone,
+                newPassword: null,
+                profilePicture: newPhotoUrl);
+
+            TempData["SuccessMessage"] = "Perfil actualizado correctamente.";
+            return RedirectToAction(nameof(MyProfile));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(model);
+        }
     }
 
     // ─────────────────────────────────────────────────────────────
