@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\RealEstateApp.Application\RealEstateApp.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\RealEstateApp.Infrastructure.Shared\RealEstateApp.Infrastructure.Shared.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\RealEstateApp.Infrastructure.Identity\RealEstateApp.Infrastructure.Identity.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\RealEstateApp.Infrastructure.Persistence\RealEstateApp.Infrastructure.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Properties;
 using RealEstateApp.Application.Interfaces.Services;
 
 namespace RealEstateApp.API.Controllers;
 
-[Authorize(Roles = "Administrador,Desarrollador")]
+[Authorize(Roles = "Admin,Developer")]
 public class PropertiesController : BaseApiController
 {
     private readonly IPropertyService _propertyService;

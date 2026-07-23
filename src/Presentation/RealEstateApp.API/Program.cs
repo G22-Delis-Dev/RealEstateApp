@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using RealEstateApp.API.Filters;
 using RealEstateApp.API.Middlewares;
+using RealEstateApp.Application;
 using RealEstateApp.Application.Interfaces.Services;
 using RealEstateApp.Application.Services;
 using RealEstateApp.Infrastructure.Identity;
@@ -12,18 +14,51 @@ using RealEstateApp.Infrastructure.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddPersistenceInfrastructure(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddSharedInfrastructure(builder.Configuration);
 
-// Registrar servicios de Application
-builder.Services.AddTransient<IAccountService, AccountService>();
+builder.Services.AddApplicationLayer();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "RealEstateApp API",
+        Version = "v1",
+        Description = "API for Real Estate App"
+    });
+
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\""
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+
+    options.OperationFilter<SwaggerSuccessResponsesFilter>();
+    options.OperationFilter<SwaggerErrorResponsesFilter>();
+});
 
 var app = builder.Build();
 
@@ -34,12 +69,10 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        // Seed de roles y usuarios de Identity
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         await RolesAndUsersSeed.SeedAsync(userManager, roleManager);
 
-        // Seed de catálogos (PropertyTypes, SaleTypes, Improvements)
         var dbContext = services.GetRequiredService<ApplicationDbContext>();
         await CatalogSeed.SeedAsync(dbContext);
     }
@@ -50,18 +83,17 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Middleware de manejo de excepciones (antes de todo para atrapar cualquier error)
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -62,6 +62,7 @@ public class ExceptionHandlingMiddleware
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError; // 500
                 response.StatusCode = 500;
                 response.Message = "Ha ocurrido un error interno del servidor.";
+                Console.WriteLine($"[Unhandled Exception]: {exception}");
                 break;
         }
 

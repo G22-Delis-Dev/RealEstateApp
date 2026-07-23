@@ -1,6 +1,227 @@
 @RealEstateApp.API_HostAddress = http://localhost:5110
+@token = YOUR_TOKEN_HERE
 
-GET {{RealEstateApp.API_HostAddress}}/weatherforecast/
+### --- Account Endpoints ---
+
+### Login (Admin/Desarrollador)
+POST {{RealEstateApp.API_HostAddress}}/api/account/login
+Content-Type: application/json
+
+{
+  "email": "adminuser",
+  "password": "123Password*"
+}
+
+### Register Client
+POST {{RealEstateApp.API_HostAddress}}/api/account/register-client
+Content-Type: application/json
+
+{
+  "firstName": "Client",
+  "lastName": "Test",
+  "email": "client@test.com",
+  "userName": "clientuser",
+  "password": "123Password*",
+  "confirmPassword": "123Password*",
+  "phone": "8091234567",
+  "idCard": "12345678901"
+}
+
+### Register Agent
+POST {{RealEstateApp.API_HostAddress}}/api/account/register-agent
+Content-Type: application/json
+
+{
+  "firstName": "Agent",
+  "lastName": "Test",
+  "email": "agent@test.com",
+  "userName": "agentuser",
+  "password": "123Password*",
+  "confirmPassword": "123Password*",
+  "phone": "8091234567",
+  "idCard": "12345678901"
+}
+
+### Register Admin
+POST {{RealEstateApp.API_HostAddress}}/api/account/register-admin
+Content-Type: application/json
+
+{
+  "firstName": "Admin2",
+  "lastName": "Test",
+  "email": "admin2@test.com",
+  "userName": "admin2user",
+  "password": "123Password*",
+  "confirmPassword": "123Password*",
+  "phone": "8091234567",
+  "idCard": "12345678901"
+}
+
+### Register Developer
+POST {{RealEstateApp.API_HostAddress}}/api/account/register-developer
+Content-Type: application/json
+
+{
+  "firstName": "Dev",
+  "lastName": "Test",
+  "email": "dev@test.com",
+  "userName": "devuser",
+  "password": "123Password*",
+  "confirmPassword": "123Password*",
+  "phone": "8091234567",
+  "idCard": "12345678901"
+}
+
+### Confirm Email
+GET {{RealEstateApp.API_HostAddress}}/api/account/confirm-email?userId=SOME_ID&token=SOME_TOKEN
+
+### --- Properties Endpoints ---
+
+### List Properties (Requires Admin/Dev Token)
+GET {{RealEstateApp.API_HostAddress}}/api/properties
+Authorization: Bearer {{token}}
 Accept: application/json
 
-###
+### Get Property by ID
+GET {{RealEstateApp.API_HostAddress}}/api/properties/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get Property by Code
+GET {{RealEstateApp.API_HostAddress}}/api/properties/code/123456
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### --- Agents Endpoints ---
+
+### List Agents
+GET {{RealEstateApp.API_HostAddress}}/api/agents
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get Agent by ID
+GET {{RealEstateApp.API_HostAddress}}/api/agents/SOME_ID
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get Agent Properties
+GET {{RealEstateApp.API_HostAddress}}/api/agents/SOME_ID/properties
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Change Agent Status (Requires Admin Token)
+PATCH {{RealEstateApp.API_HostAddress}}/api/agents/SOME_ID/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "isActive": false
+}
+
+### --- PropertyTypes Endpoints ---
+
+### List Property Types
+GET {{RealEstateApp.API_HostAddress}}/api/propertytypes
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get Property Type by ID
+GET {{RealEstateApp.API_HostAddress}}/api/propertytypes/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create Property Type (Requires Admin Token)
+POST {{RealEstateApp.API_HostAddress}}/api/propertytypes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "New Type",
+  "description": "Description of new type"
+}
+
+### Update Property Type (Requires Admin Token)
+PUT {{RealEstateApp.API_HostAddress}}/api/propertytypes/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Type",
+  "description": "Updated Description"
+}
+
+### Delete Property Type (Requires Admin Token)
+DELETE {{RealEstateApp.API_HostAddress}}/api/propertytypes/1
+Authorization: Bearer {{token}}
+
+### --- SaleTypes Endpoints ---
+
+### List Sale Types
+GET {{RealEstateApp.API_HostAddress}}/api/saletypes
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get Sale Type by ID
+GET {{RealEstateApp.API_HostAddress}}/api/saletypes/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create Sale Type (Requires Admin Token)
+POST {{RealEstateApp.API_HostAddress}}/api/saletypes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "New Sale Type",
+  "description": "Description of new sale type"
+}
+
+### Update Sale Type (Requires Admin Token)
+PUT {{RealEstateApp.API_HostAddress}}/api/saletypes/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Sale Type",
+  "description": "Updated Description"
+}
+
+### Delete Sale Type (Requires Admin Token)
+DELETE {{RealEstateApp.API_HostAddress}}/api/saletypes/1
+Authorization: Bearer {{token}}
+
+### --- Improvements Endpoints ---
+
+### List Improvements
+GET {{RealEstateApp.API_HostAddress}}/api/improvements
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get Improvement by ID
+GET {{RealEstateApp.API_HostAddress}}/api/improvements/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create Improvement (Requires Admin Token)
+POST {{RealEstateApp.API_HostAddress}}/api/improvements
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "New Improvement",
+  "description": "Description of new improvement"
+}
+
+### Update Improvement (Requires Admin Token)
+PUT {{RealEstateApp.API_HostAddress}}/api/improvements/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Improvement",
+  "description": "Updated Description"
+}
+
+### Delete Improvement (Requires Admin Token)
+DELETE {{RealEstateApp.API_HostAddress}}/api/improvements/1
+Authorization: Bearer {{token}}

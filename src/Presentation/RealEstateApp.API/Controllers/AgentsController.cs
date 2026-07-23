@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Agents;
 using RealEstateApp.Application.DTOs.Properties;
@@ -17,7 +17,7 @@ public class AgentsController : BaseApiController
 
     // GET: api/agents
     [HttpGet]
-    [Authorize(Roles = "Administrador,Desarrollador")]
+    [Authorize(Roles = "Admin,Developer")]
     public async Task<ActionResult<IEnumerable<AgentDto>>> List()
     {
         var agents = await _agentService.GetAllAsync();
@@ -39,7 +39,7 @@ public class AgentsController : BaseApiController
 
     // GET: api/agents/{id}
     [HttpGet("{id}")]
-    [Authorize(Roles = "Administrador,Desarrollador")]
+    [Authorize(Roles = "Admin,Developer")]
     public async Task<ActionResult<AgentDto>> GetById(string id)
     {
         var agent = await _agentService.GetByIdAsync(id);
@@ -62,7 +62,7 @@ public class AgentsController : BaseApiController
 
     // GET: api/agents/{id}/properties
     [HttpGet("{id}/properties")]
-    [Authorize(Roles = "Administrador,Desarrollador")]
+    [Authorize(Roles = "Admin,Developer")]
     public async Task<ActionResult<IEnumerable<PropertyDto>>> GetAgentProperty(string id)
     {
         var agent = await _agentService.GetByIdAsync(id);
@@ -78,7 +78,7 @@ public class AgentsController : BaseApiController
 
     // PATCH: api/agents/{id}/status
     [HttpPatch("{id}/status")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ChangeStatus(string id, [FromBody] ChangeAgentStatusRequest request)
     {
         var agent = await _agentService.GetByIdAsync(id);

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Catalogs;
 using RealEstateApp.Application.Interfaces.Services;
@@ -17,7 +17,7 @@ public class ImprovementsController : BaseApiController
     }
 
     [HttpGet]
-    [Authorize(Roles = "Administrador,Desarrollador")]
+    [Authorize(Roles = "Admin,Developer")]
     public async Task<ActionResult<IEnumerable<ImprovementDto>>> List()
     {
         var improvements = await _improvementService.GetAllAsync();
@@ -27,7 +27,7 @@ public class ImprovementsController : BaseApiController
     }
 
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "Administrador,Desarrollador")]
+    [Authorize(Roles = "Admin,Developer")]
     public async Task<ActionResult<ImprovementDto>> GetById(int id)
     {
         var improvement = await _improvementService.GetByIdAsync(id);
@@ -37,7 +37,7 @@ public class ImprovementsController : BaseApiController
     }
 
     [HttpPost]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ImprovementDto>> Create([FromBody] ImprovementRequestDto request)
     {
         try
@@ -52,7 +52,7 @@ public class ImprovementsController : BaseApiController
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, [FromBody] ImprovementRequestDto request)
     {
         try
@@ -67,7 +67,7 @@ public class ImprovementsController : BaseApiController
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var improvement = await _improvementService.GetByIdAsync(id);

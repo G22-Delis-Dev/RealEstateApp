@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Application.DTOs.Catalogs;
 using RealEstateApp.Application.Interfaces.Services;
@@ -17,7 +17,7 @@ public class SaleTypesController : BaseApiController
     }
 
     [HttpGet]
-    [Authorize(Roles = "Administrador,Desarrollador")]
+    [Authorize(Roles = "Admin,Developer")]
     public async Task<ActionResult<IEnumerable<SaleTypeDto>>> List()
     {
         var types = await _saleTypeService.GetAllAsync();
@@ -27,7 +27,7 @@ public class SaleTypesController : BaseApiController
     }
 
     [HttpGet("{id:int}")]
-    [Authorize(Roles = "Administrador,Desarrollador")]
+    [Authorize(Roles = "Admin,Developer")]
     public async Task<ActionResult<SaleTypeDto>> GetById(int id)
     {
         var type = await _saleTypeService.GetByIdAsync(id);
@@ -37,7 +37,7 @@ public class SaleTypesController : BaseApiController
     }
 
     [HttpPost]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<SaleTypeDto>> Create([FromBody] SaleTypeRequestDto request)
     {
         try
@@ -52,7 +52,7 @@ public class SaleTypesController : BaseApiController
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, [FromBody] SaleTypeRequestDto request)
     {
         try
@@ -67,7 +67,7 @@ public class SaleTypesController : BaseApiController
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var type = await _saleTypeService.GetByIdAsync(id);
