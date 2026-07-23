@@ -1,7 +1,13 @@
 using RealEstateApp.Application;
 using RealEstateApp.Infrastructure.Identity;
+using RealEstateApp.Infrastructure.Identity.Entities;
+using RealEstateApp.Infrastructure.Identity.Seed;
 using RealEstateApp.Infrastructure.Persistence;
+using RealEstateApp.Infrastructure.Persistence.Context;
+using RealEstateApp.Infrastructure.Persistence.Seed;
 using RealEstateApp.Infrastructure.Shared;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +28,30 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
+// Run seeds
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await RolesAndUsersSeed.SeedAsync(userManager, roleManager);
+
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        await CatalogSeed.SeedAsync(dbContext);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, ""An error occurred seeding the DB."");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseExceptionHandler(""/Home/Error"");
     app.UseHsts();
 }
 
@@ -39,7 +64,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: ""default"",
+    pattern: ""{controller=Home}/{action=Index}/{id?}"");
 
 app.Run();

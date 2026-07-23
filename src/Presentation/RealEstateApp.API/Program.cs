@@ -1,3 +1,5 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using RealEstateApp.API.Filters;
 using RealEstateApp.API.Middlewares;
@@ -17,28 +19,27 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistenceInfrastructure(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddSharedInfrastructure(builder.Configuration);
-
 builder.Services.AddApplicationLayer();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    options.SwaggerDoc(""v1"", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "RealEstateApp API",
-        Version = "v1",
-        Description = "API for Real Estate App"
+        Title = ""RealEstateApp API"",
+        Version = ""v1"",
+        Description = ""API for Real Estate App""
     });
 
-    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    options.AddSecurityDefinition(""Bearer"", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
-        Name = "Authorization",
+        Name = ""Authorization"",
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
+        Scheme = ""Bearer"",
+        BearerFormat = ""JWT"",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\""
+        Description = ""JWT Authorization header using the Bearer scheme.""
     });
 
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -49,7 +50,7 @@ builder.Services.AddSwaggerGen(options =>
                 Reference = new Microsoft.OpenApi.Models.OpenApiReference
                 {
                     Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Id = ""Bearer""
                 }
             },
             new string[] {}
@@ -62,11 +63,10 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// ── Ejecutar Seeds al iniciar ──
+// Run seeds
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-
     try
     {
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
@@ -79,9 +79,10 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Error al ejecutar los seeds de la base de datos.");
+        logger.LogError(ex, ""An error occurred seeding the DB."");
     }
 }
+
 
 if (app.Environment.IsDevelopment())
 {
