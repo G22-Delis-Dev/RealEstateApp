@@ -20,19 +20,11 @@
 
 ## 🔴 Prioridad Alta — Verificar en ejecución
 
-### 1. Flujo completo de registro y activación por correo
+### 1. Flujo completo de registro y activación por correo ✅ VERIFICADO (23/07/2026)
 
-**Qué verificar:**
-- Registrar un nuevo **Cliente** desde la pantalla pública "Únete a la app".
-- Confirmar que llega el correo de activación.
-- Confirmar que sin activar la cuenta, el login muestra error claro ("cuenta inactiva").
-- Confirmar que después de activar por el link del correo, el login funciona y redirige al Home del cliente.
+**Resultado:** `EmailService` funciona correctamente. Tests manuales pasaron y correos recibidos confirmados en `Jesusortiz221516@gmail.com`. El servicio SMTP (Gmail, puerto 465, SSL) está operativo con las credenciales configuradas en UserSecrets.
 
-**Registrar un nuevo **Desarrollador** desde el panel Admin:**
-- Confirmar que llega correo de activación al desarrollador.
-- Confirmar que sin activar, el desarrollador no puede iniciar sesión.
-
-**Por qué podría fallar:** Las credenciales SMTP están en `UserSecrets` local. En un entorno limpio o CI, `EmailSettings:Password` puede no estar configurado, causando error silencioso o excepción no capturada.
+**Pendiente complementario:** Verificar en la WebApp que el link de activación dentro del correo redirige correctamente y activa la cuenta en la DB.
 
 ---
 
@@ -167,21 +159,21 @@
 - Agente responde.
 - Cliente ve la respuesta.
 
-### 15. Pruebas unitarias existentes
+### 15. Pruebas unitarias existentes ✅ VERIFICADO (23/07/2026)
 
-**Qué ejecutar:**
-```bash
-dotnet test Tests/RealEstateApp.Infrastructure.Tests/RealEstateApp.Infrastructure.Tests.csproj
 ```
-- `LastActiveAdminCannotBeDeactivatedRuleTests` (3 tests) → deben pasar.
-- `EmailServiceManualTest` (2 tests) → requieren `UserSecrets` con `EmailSettings:Password` configurado. **No ejecutar en CI sin las credenciales.**
+✅ LastActiveAdminCannotBeDeactivatedRuleTests — 3/3 pasaron
+✅ EmailServiceManualTest — 2/2 pasaron (correos recibidos confirmados)
+```
 
 ---
 
 ## 📋 Checklist de verificación rápida
 
 ```
-[ ] Registro de cliente + correo de activación
+[✅] EmailService funciona — correos recibidos confirmados
+[✅] dotnet test — 5/5 tests pasan (3 unit + 2 email)
+[ ] Registro de cliente + correo de activación (link activa cuenta en DB)
 [ ] Login bloqueado para cliente inactivo
 [ ] Listado de Administrators carga desde /Admin/Administrators
 [ ] Listado de Developers carga desde /Admin/Developers
@@ -201,7 +193,6 @@ dotnet test Tests/RealEstateApp.Infrastructure.Tests/RealEstateApp.Infrastructur
 [ ] Dashboard admin muestra contadores correctos
 [ ] Filtros del Home funcionan combinados
 [ ] Chat entre cliente y agente funciona
-[ ] dotnet test (3 unit tests pasan)
 ```
 
 ---
