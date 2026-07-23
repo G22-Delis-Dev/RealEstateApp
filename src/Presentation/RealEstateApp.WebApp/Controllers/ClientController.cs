@@ -65,9 +65,14 @@ public class ClientController : BaseController
         var messages = await _messageService.GetConversationAsync(id, CurrentUserId, property.AgentId);
         var offers = await _offerService.GetByClientAndPropertyAsync(CurrentUserId, id);
 
+        // Obtener todas las ofertas de la propiedad para detectar si ya hay una aceptada
+        var allPropertyOffers = await _offerService.GetByPropertyAsync(id);
+
         ViewBag.Messages = messages;
         ViewBag.Offers = offers;
-        ViewBag.CanOffer = property.Status == "Disponible" && !offers.Any(o => o.Status == "Pendiente");
+        ViewBag.CanOffer = property.Status == "Disponible"
+                           && !offers.Any(o => o.Status == "Pendiente")
+                           && !allPropertyOffers.Any(o => o.Status == "Aceptada");
 
         return View(property);
     }

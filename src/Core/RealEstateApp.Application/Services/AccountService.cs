@@ -20,8 +20,16 @@ public class AccountService : IAccountService
     {
         var response = await _authService.LoginAsync(request);
 
-        // Validar acceso por canal
-        ValidateChannelAccess(response.Roles, channel);
+        // Validar acceso por canal — si no es válido, cerrar la sesión cookie antes de lanzar
+        try
+        {
+            ValidateChannelAccess(response.Roles, channel);
+        }
+        catch
+        {
+            await _authService.SignOutAsync();
+            throw;
+        }
 
         return response;
     }
@@ -83,17 +91,17 @@ public class AccountService : IAccountService
 
     /// <summary>
     /// Valida que el usuario tenga permiso de acceder por el canal solicitado.
-    /// - WebApp: solo Client y Agent pueden loguearse.
-    /// - API: solo Admin y Developer pueden autenticarse.
+    /// - WebApp: Developers no pueden loguearse (solo Admin, Agent y Client).
+    /// - API: Clients y Agents no pueden autenticarse (solo Admin y Developer).
     /// </summary>
     private static void ValidateChannelAccess(List<string> roles, string channel)
     {
         switch (channel.ToLower())
         {
             case "webapp":
-                if (roles.Any(r => r == "Developer" || r == "Admin"))
+                if (roles.Any(r => r == "Developer"))
                     throw new ForbiddenAccessException(
-                        "Los desarrolladores y administradores no pueden acceder por la WebApp.");
+                        "El usuario no tiene un rol válido asignado para acceder a la aplicación web.");
                 break;
 
             case "api":

@@ -30,16 +30,18 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
     {
+        // Soporta correo electrónico o nombre de usuario
         var user = await _userManager.FindByEmailAsync(request.Email)
-            ?? throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException($"No se encontró una cuenta con el correo {request.Email}.");
+            ?? await _userManager.FindByNameAsync(request.Email)
+            ?? throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException("Los datos de acceso son inválidos.");
 
         var result = await _signInManager.PasswordSignInAsync(user.UserName!, request.Password, false, lockoutOnFailure: false);
 
         if (!result.Succeeded)
-            throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException("Credenciales incorrectas.");
+            throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException("Los datos de acceso son inválidos.");
 
         if (!user.IsActive)
-            throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException("Tu cuenta no está activa. Contacta al administrador.");
+            throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException("El usuario se encuentra inactivo y no puede iniciar sesión.");
 
         if (!user.EmailConfirmed)
             throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException("Tu cuenta no ha sido confirmada. Revisa tu correo electrónico.");
@@ -54,6 +56,11 @@ public class AuthService : IAuthService
             Roles = roles.ToList(),
             Expiration = DateTime.UtcNow.AddMinutes(60)
         };
+    }
+
+    public async Task SignOutAsync()
+    {
+        await _signInManager.SignOutAsync();
     }
 
     public async Task<string> RegisterDeveloperAsync(RegisterDeveloperRequestDto request, string origin)

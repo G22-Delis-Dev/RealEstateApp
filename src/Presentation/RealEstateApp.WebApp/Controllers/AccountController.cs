@@ -23,7 +23,7 @@ public class AccountController : BaseController
     public IActionResult Login()
     {
         if (User.Identity is { IsAuthenticated: true })
-            return RedirectToAction("Index", "Home");
+            return RedirectBasedOnRole();
 
         return View(new LoginViewModel());
     }
@@ -37,17 +37,24 @@ public class AccountController : BaseController
         {
             var request = new LoginRequestDto
             {
-                Email = model.Email,
+                Email = model.UserOrEmail,
                 Password = model.Password
             };
 
-            await _accountService.LoginAsync(request, "WebApp");
-            
-            // Check role to redirect appropriately
-            if (User.IsInRole("Admin")) return RedirectToAction("Index", "AdminHome");
-            if (User.IsInRole("Developer") || User.IsInRole("Client")) return RedirectToAction("Index", "Home");
+            // LoginAsync autentica con cookie y retorna los roles del usuario
+            var response = await _accountService.LoginAsync(request, "WebApp");
 
-            // For agents or others, redirect to home
+            // Redirigir según el rol usando el response (la cookie ya está activa)
+            if (response.Roles.Contains("Admin"))
+                return RedirectToAction("Index", "AdminHome", new { area = "" });
+
+            if (response.Roles.Contains("Agent"))
+                return RedirectToAction("Index", "AgentProperties", new { area = "" });
+
+            if (response.Roles.Contains("Client"))
+                return RedirectToAction("Index", "Client", new { area = "" });
+
+            // Fallback al home público
             return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)
@@ -61,7 +68,7 @@ public class AccountController : BaseController
     public IActionResult Register()
     {
         if (User.Identity is { IsAuthenticated: true })
-            return RedirectToAction("Index", "Home");
+            return RedirectBasedOnRole();
 
         return View(new RegisterViewModel());
     }
@@ -102,12 +109,12 @@ public class AccountController : BaseController
             if (model.UserType == "Agent")
             {
                 await _accountService.RegisterAgentAsync(request);
-                TempData["SuccessMessage"] = "Tu cuenta de Agente fue creada con éxito. Un administrador deberá activarla.";
+                TempData["SuccessMessage"] = "Su cuenta de agente ha sido creada correctamente. Un administrador debe activar su usuario antes de que pueda iniciar sesión.";
             }
-            else // Client (o Developer)
+            else // Client
             {
                 await _accountService.RegisterClientAsync(request, origin);
-                TempData["SuccessMessage"] = "Tu cuenta fue creada con éxito. Verifica tu correo para activarla.";
+                TempData["SuccessMessage"] = "Su cuenta ha sido creada correctamente. Revise su correo electrónico para activar su usuario.";
             }
 
             return RedirectToAction(nameof(Login));
@@ -142,6 +149,22 @@ public class AccountController : BaseController
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+        return RedirectToAction("Index", "Home");
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Helpers
+    // ─────────────────────────────────────────────────────────────
+
+    /// <summary>Redirige al home del rol del usuario ya autenticado.</summary>
+    private IActionResult RedirectBasedOnRole()
+    {
+        if (User.IsInRole("Admin"))
+            return RedirectToAction("Index", "AdminHome");
+        if (User.IsInRole("Agent"))
+            return RedirectToAction("Index", "AgentProperties");
+        if (User.IsInRole("Client"))
+            return RedirectToAction("Index", "Client");
         return RedirectToAction("Index", "Home");
     }
 }

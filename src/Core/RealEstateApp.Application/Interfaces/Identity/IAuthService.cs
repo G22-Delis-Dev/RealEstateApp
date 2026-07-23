@@ -5,6 +5,7 @@ namespace RealEstateApp.Application.Interfaces.Identity;
 public interface IAuthService
 {
     Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
+    Task SignOutAsync();
     Task<string> RegisterDeveloperAsync(RegisterDeveloperRequestDto request, string origin);
     Task<string> RegisterAgentAsync(RegisterDeveloperRequestDto request);
     Task<string> RegisterAdministratorAsync(RegisterAdministratorRequestDto request, string origin);
