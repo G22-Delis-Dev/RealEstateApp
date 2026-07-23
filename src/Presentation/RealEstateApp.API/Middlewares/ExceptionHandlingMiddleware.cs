@@ -58,6 +58,12 @@ public class ExceptionHandlingMiddleware
                 response.StatusCode = 403;
                 response.Message = forbiddenEx.Message;
                 break;
+                
+            case UnauthorizedException unauthorizedEx:
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized; // 401
+                response.StatusCode = 401;
+                response.Message = unauthorizedEx.Message;
+                break;
 
             case ConflictException conflictEx:
                 context.Response.StatusCode = (int)HttpStatusCode.Conflict; // 409

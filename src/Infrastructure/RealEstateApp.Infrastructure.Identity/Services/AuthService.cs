@@ -31,18 +31,18 @@ public class AuthService : IAuthService
     public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email)
-            ?? throw new Exception($"No se encontró una cuenta con el correo {request.Email}.");
+            ?? throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException($"No se encontró una cuenta con el correo {request.Email}.");
 
         var result = await _signInManager.PasswordSignInAsync(user.UserName!, request.Password, false, lockoutOnFailure: false);
 
         if (!result.Succeeded)
-            throw new Exception("Credenciales incorrectas.");
+            throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException("Credenciales incorrectas.");
 
         if (!user.IsActive)
-            throw new Exception("Tu cuenta no está activa. Contacta al administrador.");
+            throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException("Tu cuenta no está activa. Contacta al administrador.");
 
         if (!user.EmailConfirmed)
-            throw new Exception("Tu cuenta no ha sido confirmada. Revisa tu correo electrónico.");
+            throw new RealEstateApp.Application.Common.Exceptions.UnauthorizedException("Tu cuenta no ha sido confirmada. Revisa tu correo electrónico.");
 
         var roles = await _userManager.GetRolesAsync(user);
         var token = _jwtTokenService.GenerateToken(user.Id, user.Email!, roles);
