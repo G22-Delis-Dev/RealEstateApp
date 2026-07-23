@@ -58,6 +58,15 @@ public class AuthService : IAuthService
 
     public async Task<string> RegisterDeveloperAsync(RegisterDeveloperRequestDto request, string origin)
     {
+        if (await EmailExistsAsync(request.Email))
+            throw new Exception($"El correo {request.Email} ya está registrado.");
+
+        if (await UsernameExistsAsync(request.UserName))
+            throw new Exception($"El nombre de usuario {request.UserName} ya está en uso.");
+
+        if (!string.IsNullOrWhiteSpace(request.IdCard) && await CedulaExistsAsync(request.IdCard))
+            throw new Exception($"La cédula {request.IdCard} ya está registrada.");
+
         var user = new ApplicationUser
         {
             FirstName = request.FirstName,
@@ -88,6 +97,15 @@ public class AuthService : IAuthService
 
     public async Task<string> RegisterAgentAsync(RegisterDeveloperRequestDto request)
     {
+        if (await EmailExistsAsync(request.Email))
+            throw new Exception($"El correo {request.Email} ya está registrado.");
+
+        if (await UsernameExistsAsync(request.UserName))
+            throw new Exception($"El nombre de usuario {request.UserName} ya está en uso.");
+
+        if (!string.IsNullOrWhiteSpace(request.IdCard) && await CedulaExistsAsync(request.IdCard))
+            throw new Exception($"La cédula {request.IdCard} ya está registrada.");
+
         var user = new ApplicationUser
         {
             FirstName = request.FirstName,
@@ -112,6 +130,15 @@ public class AuthService : IAuthService
 
     public async Task<string> RegisterAdministratorAsync(RegisterAdministratorRequestDto request, string origin)
     {
+        if (await EmailExistsAsync(request.Email))
+            throw new Exception($"El correo {request.Email} ya está registrado.");
+
+        if (await UsernameExistsAsync(request.UserName))
+            throw new Exception($"El nombre de usuario {request.UserName} ya está en uso.");
+
+        if (!string.IsNullOrWhiteSpace(request.IdCard) && await CedulaExistsAsync(request.IdCard))
+            throw new Exception($"La cédula {request.IdCard} ya está registrada.");
+
         var user = new ApplicationUser
         {
             FirstName = request.FirstName,

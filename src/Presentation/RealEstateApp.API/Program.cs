@@ -25,21 +25,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc(""v1"", new Microsoft.OpenApi.Models.OpenApiInfo
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = ""RealEstateApp API"",
-        Version = ""v1"",
-        Description = ""API for Real Estate App""
+        Title = "RealEstateApp API",
+        Version = "v1",
+        Description = "API for Real Estate App"
     });
 
-    options.AddSecurityDefinition(""Bearer"", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
-        Name = ""Authorization"",
+        Name = "Authorization",
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-        Scheme = ""Bearer"",
-        BearerFormat = ""JWT"",
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = ""JWT Authorization header using the Bearer scheme.""
+        Description = "JWT Authorization header using the Bearer scheme."
     });
 
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(options =>
                 Reference = new Microsoft.OpenApi.Models.OpenApiReference
                 {
                     Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = ""Bearer""
+                    Id = "Bearer"
                 }
             },
             new string[] {}
@@ -79,7 +79,7 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, ""An error occurred seeding the DB."");
+        logger.LogError(ex, "An error occurred seeding the DB.");
     }
 }
 

@@ -44,14 +44,14 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, ""An error occurred seeding the DB."");
+        logger.LogError(ex, "An error occurred seeding the DB.");
     }
 }
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler(""/Home/Error"");
+    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
@@ -64,7 +64,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: ""default"",
-    pattern: ""{controller=Home}/{action=Index}/{id?}"");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
